@@ -15,6 +15,7 @@ function extractSchemaFromZod(schemaNode) {
     if (t.isObjectExpression(arg)) {
       arg.properties.forEach((prop) => {
         if (t.isObjectProperty(prop) && t.isIdentifier(prop.key)) {
+          // @ts-ignore
           const type = prop.value.callee.property.name;
           properties[prop.key.name] = { type };
         }
@@ -75,7 +76,7 @@ function processFile(filePath) {
           if (t.isVariableDeclarator(decl) && t.isIdentifier(decl.id)) {
             const varName = decl.id.name;
             let schema = {};
-            let options = {};
+            let options: any = {};
 
             if (
               varName === "POST" ||
@@ -111,6 +112,7 @@ function processFile(filePath) {
                           t.isObjectProperty(prop) &&
                           t.isIdentifier(prop.key)
                         ) {
+                          // @ts-ignore
                           acc[prop.key.name] = prop.value.callee.property.name;
                         }
                         return acc;
