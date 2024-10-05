@@ -1,0 +1,30 @@
+{
+  "name": "next-openapi-gen",
+  "version": "0.0.1",
+  "description": "Super fast and easy way to generate OpenAPI documentation for Next.js",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
+  "bin": {
+    "next-openapi-gen": "./dist/index"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/parser": "^7.25.7",
+    "@babel/traverse": "^7.25.7",
+    "@babel/types": "^7.25.7",
+    "commander": "^12.1.0",
+    "fs-extra": "^10.0.0",
+    "ora": "^8.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.4",
+    "typescript": "^4.5.4"
+  }
+}
