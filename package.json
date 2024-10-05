@@ -1,7 +1,7 @@
 {
   "name": "next-openapi-gen",
   "version": "0.0.1",
-  "description": "Super fast and easy way to generate OpenAPI documentation for Next.js",
+  "description": "Automatically generate OpenAPI documentation for Next.js API",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -13,8 +13,26 @@
     "build": "tsc",
     "prepare": "npm run build"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/tazo90/next-openapi-gen.git"
+  },
+  "keywords": [
+    "react",
+    "nextjs",
+    "openapi",
+    "swagger",
+    "docs",
+    "api"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Mariusz Winnik",
   "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "@babel/parser": "^7.25.7",
     "@babel/traverse": "^7.25.7",
