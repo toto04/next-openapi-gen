@@ -17,9 +17,9 @@ program
 program
   .command("init")
   .addOption(
-    new Option("-i, --ui <type>", "Specify the UI type, e.g., swagger").choices(
-      ["swagger", "element", "redoc"]
-    )
+    new Option("-i, --ui <type>", "Specify the UI type, e.g., swagger")
+      .choices(["swagger", "element", "redoc"])
+      .default("swagger")
   )
   .option("-u, --docs-url <url>", "Specify the docs URL", "api-docs")
   .description("Initialize a openapi specification")
