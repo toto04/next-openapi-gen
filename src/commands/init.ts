@@ -72,7 +72,9 @@ function extendOpenApiTemplate(spec, options) {
   spec.docsUrl = options.docsUrl ?? spec.docsUrl;
 }
 
-export async function init(ui: string, docsUrl: string) {
+export async function init(options: { ui: string; docsUrl: string }) {
+  const { ui, docsUrl } = options;
+
   spinner.start();
 
   try {

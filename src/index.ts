@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Command } from "commander";
+import { Command, Option } from "commander";
 
 import { init } from "./commands/init.js";
 import { generate } from "./commands/generate.js";
@@ -15,7 +15,13 @@ program
   );
 
 program
-  .command("init <ui> <docs-url>")
+  .command("init")
+  .addOption(
+    new Option("-i, --ui <type>", "Specify the UI type, e.g., swagger").choices(
+      ["swagger", "element", "redoc"]
+    )
+  )
+  .option("-u, --docs-url <url>", "Specify the docs URL", "api-docs")
   .description("Initialize a openapi specification")
   .action(init);
 
