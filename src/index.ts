@@ -3,7 +3,7 @@
 import { Command } from "commander";
 
 import { init } from "./commands/init.js";
-import { generateOpenapiSpec } from "./commands/generate-openapi-spec.js";
+import { generate } from "./commands/generate.js";
 
 const program = new Command();
 
@@ -22,6 +22,6 @@ program
 program
   .command("generate")
   .description("Generate a specification based on api routes")
-  .action(generateOpenapiSpec);
+  .action(generate);
 
 program.parse(process.argv);

@@ -5,29 +5,11 @@ import ora from "ora";
 import { exec } from "child_process";
 import util from "util";
 
+import openapiTemplate from "../openapi-template.js";
+
 const execPromise = util.promisify(exec);
 
 const spinner = ora("Initializing project with OpenAPI template...\n");
-
-const openApiTemplate = {
-  openapi: "3.0.0",
-  info: {
-    title: "API Documentation",
-    version: "1.0.0",
-    description: "This is the OpenAPI specification for your project.",
-  },
-  servers: [
-    {
-      url: "http://localhost:3000",
-      description: "Local development server",
-    },
-  ],
-  paths: {},
-  apiPath: "./src/app/api",
-  docsUrl: "api-docs",
-  ui: "swagger",
-  outputPath: "./public/swagger.json",
-};
 
 const getPackageManager = async () => {
   if (fs.existsSync(path.join(process.cwd(), "yarn.lock"))) {
@@ -95,9 +77,11 @@ export async function init(ui: string, docsUrl: string) {
 
   try {
     const outputPath = path.join(process.cwd(), "next.openapi.json");
-    extendOpenApiTemplate(openApiTemplate, { docsUrl, ui });
+    const template = { ...openapiTemplate };
 
-    await fse.writeJson(outputPath, openApiTemplate, { spaces: 2 });
+    extendOpenApiTemplate(template, { docsUrl, ui });
+
+    await fse.writeJson(outputPath, template, { spaces: 2 });
     spinner.succeed(`Created OpenAPI template in next.openapi.json`);
 
     if (ui === "swagger") {
