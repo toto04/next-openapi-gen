@@ -13,6 +13,7 @@ export function extractJSDocComments(path: NodePath): DataTypes {
   let paramsType = "";
   let bodyType = "";
   let responseType = "";
+  let auth = "";
   let isOpenApi = false;
 
   if (comments) {
@@ -24,6 +25,23 @@ export function extractJSDocComments(path: NodePath): DataTypes {
       if (!summary) {
         const summaryIndex = isOpenApi ? 1 : 0;
         summary = commentValue.split("\n")[summaryIndex];
+      }
+
+      if (commentValue.includes("@auth")) {
+        const regex = /@auth:\s*(.*)/;
+        const value = commentValue.match(regex)[1].trim();
+
+        switch (value) {
+          case "bearer":
+            auth = "BearerAuth";
+            break;
+          case "basic":
+            auth = "BasicAuth";
+            break;
+          case "apikey":
+            auth = "ApiKeyAuth";
+            break;
+        }
       }
 
       if (commentValue.includes("@desc")) {
@@ -46,6 +64,7 @@ export function extractJSDocComments(path: NodePath): DataTypes {
   }
 
   return {
+    auth,
     summary,
     description,
     paramsType,

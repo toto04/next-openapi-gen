@@ -88,7 +88,7 @@ export class RouteProcessor {
     const routePath = this.getRoutePath(filePath);
     const rootPath = capitalize(routePath.split("/")[1]);
     const operationId = getOperationId(routePath, method);
-    const { summary, description, isOpenApi } = dataTypes;
+    const { summary, description, auth, isOpenApi } = dataTypes;
 
     if (this.config.includeOpenApiRoutes && !isOpenApi) {
       // If flag is enabled and there is no @openapi tag, then skip path
@@ -107,8 +107,20 @@ export class RouteProcessor {
       summary: summary,
       description: description,
       tags: [rootPath],
-      parameters: params,
     };
+
+    // Add auth
+    if (auth) {
+      definition.security = [
+        {
+          [auth]: [],
+        },
+      ];
+    }
+
+    if (params) {
+      definition.parameters = params;
+    }
 
     // Add request body
     if (MUTATION_HTTP_METHODS.includes(method.toUpperCase())) {

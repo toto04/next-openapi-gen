@@ -22,6 +22,7 @@ export type OpenApiTemplate = {
 };
 
 export type DataTypes = {
+  auth: string;
   summary: string;
   description: string;
   paramsType: string;
@@ -35,7 +36,8 @@ export type RouteDefinition = {
   summary: string;
   description: string;
   tags: string[];
-  parameters: any;
+  security?: any;
+  parameters?: any;
   requestBody?: any;
   responses?: any;
 };

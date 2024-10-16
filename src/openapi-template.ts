@@ -11,6 +11,15 @@ export default {
       description: "Local development server",
     },
   ],
+  components: {
+    securitySchemes: {
+      BearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+      },
+    },
+  },
   apiDir: "./src/app/api",
   schemaDir: "./src",
   docsUrl: "api-docs",
