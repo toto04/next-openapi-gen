@@ -11,10 +11,10 @@ export default {
       description: "Local development server",
     },
   ],
-  paths: {},
-  apiPath: "./src/app/api",
+  apiDir: "./src/app/api",
+  schemaDir: "./src",
   docsUrl: "api-docs",
   ui: "swagger",
-  outputPath: "./public/swagger.json",
+  outputFile: "swagger.json",
   includeOpenApiRoutes: true,
 };

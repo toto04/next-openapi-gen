@@ -24,6 +24,7 @@ const getPackageManager = async () => {
 async function createDocsPage() {
   const paths = ["app", "api-docs"];
   const srcPath = path.join(process.cwd(), "src");
+  const { outputFile } = openapiTemplate;
 
   if (fs.existsSync(srcPath)) {
     paths.unshift("src");
@@ -45,7 +46,7 @@ const SwaggerUI = dynamic(() => import("swagger-ui-react"), {
 export default async function ApiDocsPage() {
   return (
     <section>
-      <SwaggerUI url="/swagger.json" />
+      <SwaggerUI url="/${outputFile}" />
     </section>
   );
 }
