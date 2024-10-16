@@ -7,7 +7,7 @@ export default {
   },
   servers: [
     {
-      url: "http://localhost:3000",
+      url: "http://localhost:3000/api",
       description: "Local development server",
     },
   ],
@@ -16,5 +16,5 @@ export default {
   docsUrl: "api-docs",
   ui: "swagger",
   outputFile: "swagger.json",
-  includeOpenApiRoutes: true,
+  includeOpenApiRoutes: false,
 };
