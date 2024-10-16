@@ -1,14 +1,17 @@
 {
   "name": "next-openapi-gen",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Automatically generate OpenAPI documentation for Next.js API",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "bin": {
-    "next-openapi-gen": "./dist/index"
+    "next-openapi-gen": "./dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build"
