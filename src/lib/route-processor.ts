@@ -29,7 +29,7 @@ export class RouteProcessor {
     const content = fs.readFileSync(filePath, "utf-8");
     const ast = parse(content, {
       sourceType: "module",
-      plugins: ["typescript"],
+      plugins: ["typescript", "decorators-legacy"],
     });
 
     traverse.default(ast, {
