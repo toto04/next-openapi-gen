@@ -1,7 +1,7 @@
 {
   "name": "next-openapi-gen",
   "version": "0.0.9",
-  "description": "Automatically generate OpenAPI documentation for Next.js API",
+  "description": "Super fast and easy way to generate OpenAPI 3.0 documentation automatically from API routes in a NextJS 14.",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
