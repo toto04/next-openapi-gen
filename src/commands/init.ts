@@ -12,12 +12,26 @@ const execPromise = util.promisify(exec);
 const spinner = ora("Initializing project with OpenAPI template...\n");
 
 const getPackageManager = async () => {
-  if (fs.existsSync(path.join(process.cwd(), "yarn.lock"))) {
-    return "yarn";
+  let currentDir = process.cwd();
+
+  while (true) {
+    // Check for Yarn lock file
+    if (fs.existsSync(path.join(currentDir, "yarn.lock"))) {
+      return "yarn";
+    }
+    // Check for PNPM lock file
+    if (fs.existsSync(path.join(currentDir, "pnpm-lock.yaml"))) {
+      return "pnpm";
+    }
+    // If we're at the root directory, break the loop
+    const parentDir = path.dirname(currentDir);
+    if (parentDir === currentDir) {
+      break; // We've reached the root
+    }
+    currentDir = parentDir; // Move up one directory
   }
-  if (fs.existsSync(path.join(process.cwd(), "pnpm-lock.yaml"))) {
-    return "pnpm";
-  }
+
+  // Default to npm if no lock files are found
   return "npm";
 };
 
