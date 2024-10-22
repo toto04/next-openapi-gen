@@ -14,14 +14,14 @@ With support for multiple user interfaces next-openapi-gen makes documenting you
 - Swagger
 - Redoc
 - Stoplight Elements
-- Rapidoc
+- RapiDoc
 
 ## Features
 
 - **Automatic OpenAPI Generation**: Generate OpenAPI 3.0 documentation from your Next.js routes, automatically parsing TypeScript types for parameters, request bodies and responses.
 - **TypeScript Type Scanning**: Automatically resolve TypeScript types for params, body, and responses based on your API endpoint's TypeScript definitions. Field comments in TypeScript types are reflected as descriptions in the OpenAPI schema.
 - **JSDoc-Based Documentation (Optional)**:  Document API routes with JSDoc comments, including tags like `@openapi`, `@auth`, `@desc`, `@params`, `@body`, and `@response` to easily define route metadata.
-- **UI Interface Options**: Choose between Swagger UI, Elements, or Redoc to visualize your API documentation. Customize the interface to fit your preferences.
+- **UI Interface Options**: Choose between `Swagger UI`, `Redoc`, `Stoplight Elements` or `RapiDoc` to visualize your API documentation. Customize the interface to fit your preferences.
 - **Real-time Documentation**: As your API evolves, regenerate the OpenAPI documentation with a single command, ensuring your documentation is always up to date.
 - **Easy configuration**: Customize generator behavior using the `next.openapi.json` configuration file, allowing for quick adjustments without modifying the code.
 
