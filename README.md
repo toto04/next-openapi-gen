@@ -33,7 +33,7 @@ yarn add next-openapi-gen
 
 ## Demo
 
-![https://s1.gifyu.com/images/SOvhR.gif](https://s1.gifyu.com/images/SOvhR.gif)
+![Demo File](https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/demo.gif)
 
 ## Usage
 
