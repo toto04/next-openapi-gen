@@ -69,10 +69,9 @@ function getDocsPageDependencies(ui: string) {
   return deps.join(" ");
 }
 
-async function createDocsPage() {
+async function createDocsPage(ui: string, outputFile: string) {
   const paths = ["app", "api-docs"];
   const srcPath = path.join(process.cwd(), "src");
-  const { ui, outputFile } = openapiTemplate;
 
   if (fs.existsSync(srcPath)) {
     paths.unshift("src");
@@ -120,7 +119,7 @@ export async function init(options: { ui: string; docsUrl: string }) {
     await fse.writeJson(outputPath, template, { spaces: 2 });
     spinner.succeed(`Created OpenAPI template in next.openapi.json`);
 
-    createDocsPage();
+    createDocsPage(ui, template.outputFile);
     installDependencies(ui);
   } catch (error) {
     spinner.fail(`Failed to initialize project: ${error.message}`);
