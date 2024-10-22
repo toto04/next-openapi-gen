@@ -31,6 +31,10 @@ With support for multiple user interfaces next-openapi-gen makes documenting you
 yarn add next-openapi-gen
 ```
 
+## Demo
+
+![https://s1.gifyu.com/images/SOvhR.gif](https://s1.gifyu.com/images/SOvhR.gif)
+
 ## Usage
 
 ### Step 1: Initialize Configuration and Setup
