@@ -18,7 +18,7 @@ program
   .command("init")
   .addOption(
     new Option("-i, --ui <type>", "Specify the UI type, e.g., swagger")
-      .choices(["swagger", "redoc", "elements"])
+      .choices(["swagger", "redoc", "stoplight", "rapidoc"])
       .default("swagger")
   )
   .option("-u, --docs-url <url>", "Specify the docs URL", "api-docs")

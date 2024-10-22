@@ -12,6 +12,7 @@
 - Swagger
 - Redoc
 - Stoplight Elements
+- Rapidoc
 
 ## Features
 
@@ -37,6 +38,10 @@ Run the following command to generate the `next.openapi.json` configuration file
 ```bash
 npx next-openapi-gen init --ui swagger --docs-url api-docs
 ```
+
+Parameters:
+- ui: swagger | redoc | elements | rapidoc
+- docs-url: url on which api docs will be visible
 
 This command does the following:
 
