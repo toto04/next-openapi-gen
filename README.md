@@ -2,6 +2,8 @@
 
 **next-openapi-gen** super fast and easy way to generate OpenAPI 3.0 documentation automatically from API routes in a Next.js 14.
 
+With support for multiple user interfaces next-openapi-gen makes documenting your API a breeze!
+
 ## Prerequisites
 
 - Nextjs >= 14
