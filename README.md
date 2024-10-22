@@ -11,7 +11,7 @@
 
 - **Automatic OpenAPI Generation**: Generate OpenAPI 3.0 documentation from your Next.js routes, automatically parsing TypeScript types for parameters, request bodies and responses.
 - **TypeScript Type Scanning**: Automatically resolve TypeScript types for params, body, and responses based on your API endpoint's TypeScript definitions. Field comments in TypeScript types are reflected as descriptions in the OpenAPI schema.
-- **JSDoc-Based Documentation**:  Document API routes with JSDoc comments, including tags like `@openapi`, `@auth`, `@desc`, `@params`, `@body`, and `@response` to easily define route metadata.
+- **JSDoc-Based Documentation (Optional)**:  Document API routes with JSDoc comments, including tags like `@openapi`, `@auth`, `@desc`, `@params`, `@body`, and `@response` to easily define route metadata.
 - **UI Interface Options**: Choose between Swagger UI, Elements, or Redoc to visualize your API documentation. Customize the interface to fit your preferences.
 - **Real-time Documentation**: As your API evolves, regenerate the OpenAPI documentation with a single command, ensuring your documentation is always up to date.
 - **Easy configuration**: Customize generator behavior using the `next.openapi.json` configuration file, allowing for quick adjustments without modifying the code.
@@ -29,7 +29,7 @@ yarn add next-openapi-gen
 Run the following command to generate the `next.openapi.json` configuration file and automatically set up Swagger UI with `/api-docs` routes:
 
 ```bash
-npx next-openapi-gen init
+npx next-openapi-gen init --ui swagger --docs-url api-docs
 ```
 
 This command does the following:
