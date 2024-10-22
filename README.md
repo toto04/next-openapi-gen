@@ -42,8 +42,8 @@ npx next-openapi-gen init --ui swagger --docs-url api-docs
 ```
 
 Parameters:
-- ui: swagger | redoc | elements | rapidoc
-- docs-url: url on which api docs will be visible
+- **ui**: `swagger` | `redoc` | `stoplight` | `rapidoc`
+- **docs-url**: url on which api docs will be visible
 
 This command does the following:
 
