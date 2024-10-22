@@ -8,6 +8,7 @@ import util from "util";
 import openapiTemplate from "../openapi-template.js";
 import { swaggerDeps, SwaggerUI } from "../components/swagger.js";
 import { redocDeps, RedocUI } from "../components/redoc.js";
+import { elementsDeps, ElementsUI } from "../components/elements.js";
 
 const execPromise = util.promisify(exec);
 
@@ -38,11 +39,15 @@ const getPackageManager = async () => {
 };
 
 function getDocsPage(ui: string, outputFile: string) {
-  if (ui === "swagger") {
-    return SwaggerUI(outputFile);
-  } else if (ui === "redoc") {
-    return RedocUI(outputFile);
+  let DocsComponent = SwaggerUI;
+
+  if (ui === "redoc") {
+    DocsComponent = RedocUI;
+  } else if (ui === "elements") {
+    DocsComponent = ElementsUI;
   }
+
+  return DocsComponent(outputFile);
 }
 
 function getDocsPageDependencies(ui: string) {
@@ -52,6 +57,8 @@ function getDocsPageDependencies(ui: string) {
     deps = swaggerDeps;
   } else if (ui === "redoc") {
     deps = redocDeps;
+  } else if (ui === "elements") {
+    deps = elementsDeps;
   }
 
   return deps.join(" ");

@@ -7,6 +7,12 @@
 - Nextjs >= 14
 - Node >= 18
 
+## Supported interfaces
+
+- Swagger
+- Redoc
+- Stoplight Elements
+
 ## Features
 
 - **Automatic OpenAPI Generation**: Generate OpenAPI 3.0 documentation from your Next.js routes, automatically parsing TypeScript types for parameters, request bodies and responses.
