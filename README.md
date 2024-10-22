@@ -123,3 +123,31 @@ The `next.openapi.json` file allows you to configure the behavior of the OpenAPI
 - **ui**: (default: `swagger`) OpenAPI UI interface.
 - **outputFile**: (default: `./swagger.json`) The file where the generated OpenAPI specification will be saved in `public` folder.
 - **includeOpenApiRoutes**: (default: `false`) When `true`, the generator will only include routes that have the `@openapi` tag in their JSDoc comments.
+
+## Interface providers
+
+<div align="center">
+<table>
+  <thead>
+   <th>SwaggerUI</th>
+   <th>Redoc</th>
+   <th>Stoplight Elements</th>
+   <th>RapiDoc</th>
+  </thead>
+  <tbody>
+   <tr>
+    <td>
+	<img width="320" alt="swagger" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/swagger.png" alt-text="swagger">
+	</td>
+	<td>
+	<img width="320" alt="redoc" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/redoc.png" alt-text="redoc">
+	</td>
+	<td>
+	<img width="320" alt="stoplight" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/stoplight.png" alt-text="stoplight">
+	</td>
+	<td>
+	<img width="320" alt="rapidoc" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/rapidoc.png" alt-text="rapidoc">
+	</td>
+   </tr>
+  </tbody>
+</table>
