@@ -25,15 +25,13 @@ With support for multiple user interfaces next-openapi-gen makes documenting you
 - **Real-time Documentation**: As your API evolves, regenerate the OpenAPI documentation with a single command, ensuring your documentation is always up to date.
 - **Easy configuration**: Customize generator behavior using the `next.openapi.json` configuration file, allowing for quick adjustments without modifying the code.
 
+![Demo File](https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/demo.gif)
+
 ## Installation
 
 ```bash
 yarn add next-openapi-gen
 ```
-
-## Demo
-
-![Demo File](https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/demo.gif)
 
 ## Usage
 
