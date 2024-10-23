@@ -37,6 +37,9 @@ export class SchemaProcessor {
     });
   }
 
+  /**
+   * Function recognizes different elements of TS like variable, type, interface, enum
+   */
   private processSchemaFile(
     filePath: string,
     schemaName: string,
@@ -64,7 +67,39 @@ export class SchemaProcessor {
           callback(path.node);
         }
       },
+      TSEnumDeclaration: (path) => {
+        if (t.isIdentifier(path.node.id, { name: schemaName })) {
+          callback(path.node);
+        }
+      },
     });
+  }
+
+  private processEnum(enumNode: t.TSEnumDeclaration): object {
+    // Initialization OpenAPI enum object
+    const enumSchema = {
+      type: "string",
+      enum: [],
+    };
+
+    // Iterate throught enum members
+    enumNode.members.forEach((member) => {
+      if (t.isTSEnumMember(member)) {
+        const name = member.id?.name;
+        const value = member.initializer?.value;
+        let type = member.initializer?.type;
+
+        if (type === "NumericLiteral") {
+          enumSchema.type = "number";
+        }
+
+        const targetValue = value || name;
+
+        enumSchema.enum.push(targetValue);
+      }
+    });
+
+    return enumSchema;
   }
 
   private extractTypesFromSchema(schema, dataType) {
@@ -75,6 +110,9 @@ export class SchemaProcessor {
       const typeAnnotation = property.typeAnnotation?.typeAnnotation?.type;
       const type = this.getTypeFromAnnotation(typeAnnotation);
       const isOptional = !!property.optional; // check if property is optional
+      // In case of typescript type get the name
+      const typeName = property.typeAnnotation?.typeAnnotation?.typeName?.name;
+
       let description = "";
 
       // get comments for field
@@ -82,10 +120,20 @@ export class SchemaProcessor {
         description = property.trailingComments[0].value.trim(); // get first comment
       }
 
-      const field = {
+      let field = {
         type: type,
         description: description,
       };
+
+      // Handle custom types & enums
+      if (type === "object") {
+        const obj = this.findSchemaDefinition(typeName);
+
+        if (obj?.type === "TSEnumDeclaration") {
+          const enumValues = this.processEnum(obj);
+          field = { ...field, ...enumValues };
+        }
+      }
 
       if (dataType === "params") {
         // @ts-ignore
@@ -108,6 +156,17 @@ export class SchemaProcessor {
     if (schema.type === "TSTypeLiteral" && schema.members) {
       schema.members.forEach(handleProperty);
     }
+
+    // let enumValues = null;
+
+    //   // check if type is enum
+    //   if (
+    //     typeAnnotation === "TSTypeReference"
+    //     // (schema.enum && schema.enum[key])
+    //   ) {
+    //     console.log("ENUM", schema);
+    //     enumValues = schema.enums[key]; // get value from enum
+    //   }
 
     return result;
   }
