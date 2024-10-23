@@ -97,9 +97,9 @@ export async function POST(req: Request) {
 - `@openapi`: Marks the route for inclusion in the OpenAPI specification.
 - `@auth`: Specifies authentication type used for API route (`basic`, `bearer`, `apikey`)
 - `@desc`: Provides a detailed description of the API route.
-- `@params`: Specifies the TypeScript interface or Zod schema for the query parameters.
-- `@body`: Specifies the TypeScript interface or Zod schema for the request body.
-- `@response`: Specifies the TypeScript interface or Zod schema for the response.
+- `@params`: Specifies the TypeScript interface for the query parameters.
+- `@body`: Specifies the TypeScript interface for the request body.
+- `@response`: Specifies the TypeScript interface for the response.
 
 ### Step 3: Generate the OpenAPI Specification
 
