@@ -93,6 +93,7 @@ export class SchemaProcessor {
           name: key,
           in: "query",
           schema: field,
+          description,
           required: !isOptional,
         });
       } else {

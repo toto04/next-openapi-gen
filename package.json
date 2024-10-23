@@ -26,7 +26,8 @@
     "openapi",
     "swagger",
     "docs",
-    "api"
+    "api",
+    "redoc"
   ],
   "publishConfig": {
     "access": "public"
