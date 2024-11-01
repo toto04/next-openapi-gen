@@ -119,7 +119,8 @@ export class RouteProcessor {
     }
 
     if (params) {
-      definition.parameters = params;
+      definition.parameters =
+        this.schemaProcessor.createRequestParamsSchema(params);
     }
 
     // Add request body
