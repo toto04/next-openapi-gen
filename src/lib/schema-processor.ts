@@ -4,6 +4,25 @@ import { parse } from "@babel/parser";
 import traverse from "@babel/traverse";
 import * as t from "@babel/types";
 
+interface Property {
+  in?: "query";
+  name?: string;
+  type?: string;
+  description?: string;
+  required?: boolean;
+  nullable?: boolean;
+  enum?: any;
+  schema?: {
+    type: string;
+    enum?: any;
+    description?: string;
+  };
+}
+
+interface Params {
+  properties: Record<string, Property>;
+}
+
 export class SchemaProcessor {
   private schemaDir: string;
   private typeDefinitions: any = {};
@@ -80,19 +99,22 @@ export class SchemaProcessor {
 
     if (t.isTSTypeLiteral(typeNode) || t.isTSInterfaceBody(typeNode)) {
       const properties = {};
-      (typeNode.members || []).forEach((member) => {
-        if (t.isTSPropertySignature(member) && t.isIdentifier(member.key)) {
-          const propName = member.key.name;
-          const options = this.getPropertyOptions(member);
 
-          const property = {
-            ...this.resolveTSNodeType(member.typeAnnotation?.typeAnnotation),
-            ...options,
-          };
+      if ("members" in typeNode) {
+        (typeNode.members || []).forEach((member) => {
+          if (t.isTSPropertySignature(member) && t.isIdentifier(member.key)) {
+            const propName = member.key.name;
+            const options = this.getPropertyOptions(member);
 
-          properties[propName] = property;
-        }
-      });
+            const property = {
+              ...this.resolveTSNodeType(member.typeAnnotation?.typeAnnotation),
+              ...options,
+            };
+
+            properties[propName] = property;
+          }
+        });
+      }
 
       return { type: "object", properties };
     }
@@ -169,7 +191,9 @@ export class SchemaProcessor {
     // Iterate throught enum members
     enumNode.members.forEach((member) => {
       if (t.isTSEnumMember(member)) {
+        // @ts-ignore
         const name = member.id?.name;
+        // @ts-ignore
         const value = member.initializer?.value;
         let type = member.initializer?.type;
 
@@ -197,7 +221,7 @@ export class SchemaProcessor {
       description = node.trailingComments[0].value.trim(); // get first comment
     }
 
-    const options = {};
+    const options: Property = {};
 
     if (description) {
       options.description = description;
@@ -212,12 +236,12 @@ export class SchemaProcessor {
     return options;
   }
 
-  public createRequestParamsSchema(params: Record<string, any>) {
+  public createRequestParamsSchema(params: Params) {
     const queryParams = [];
 
     if (params.properties) {
       for (let [name, value] of Object.entries(params.properties)) {
-        const param = {
+        const param: Property = {
           in: "query",
           name,
           schema: {
