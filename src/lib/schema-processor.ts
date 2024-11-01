@@ -4,24 +4,7 @@ import { parse } from "@babel/parser";
 import traverse from "@babel/traverse";
 import * as t from "@babel/types";
 
-interface Property {
-  in?: "query";
-  name?: string;
-  type?: string;
-  description?: string;
-  required?: boolean;
-  nullable?: boolean;
-  enum?: any;
-  schema?: {
-    type: string;
-    enum?: any;
-    description?: string;
-  };
-}
-
-interface Params {
-  properties: Record<string, Property>;
-}
+import { Params, Property } from "../types";
 
 export class SchemaProcessor {
   private schemaDir: string;
@@ -269,10 +252,7 @@ export class SchemaProcessor {
     return {
       content: {
         "application/json": {
-          schema: {
-            type: "object",
-            properties: body,
-          },
+          schema: body,
         },
       },
     };

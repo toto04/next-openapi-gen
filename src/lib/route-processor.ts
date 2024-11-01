@@ -159,7 +159,7 @@ export class RouteProcessor {
         (method: any) => method.tags || []
       );
 
-      // Assume we are interested in only the first tags
+      // Let's user only the first tags
       const aPrimaryTag = aTags[0] || "";
       const bPrimaryTag = bTags[0] || "";
 
@@ -173,7 +173,6 @@ export class RouteProcessor {
       const aLength = a.split("/").length;
       const bLength = b.split("/").length;
 
-      // Return the result of length comparison
       return aLength - bLength; // Shorter paths come before longer ones
     }
 

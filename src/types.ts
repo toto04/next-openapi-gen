@@ -41,3 +41,22 @@ export type RouteDefinition = {
   requestBody?: any;
   responses?: any;
 };
+
+export type Property = {
+  in?: "query";
+  name?: string;
+  type?: string;
+  description?: string;
+  required?: boolean;
+  nullable?: boolean;
+  enum?: any;
+  schema?: {
+    type: string;
+    enum?: any;
+    description?: string;
+  };
+};
+
+export type Params = {
+  properties: Record<string, Property>;
+};
