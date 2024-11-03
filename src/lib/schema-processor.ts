@@ -145,6 +145,19 @@ export class SchemaProcessor {
       return { type: "object", properties };
     }
 
+    if (t.isTSUnionType(node)) {
+      return {
+        anyOf: node.types.map((subNode) => this.resolveTSNodeType(subNode)),
+      };
+    }
+
+    // case where a type is a reference to another defined type
+    if (t.isTSTypeReference(node) && t.isIdentifier(node.typeName)) {
+      return { $ref: `#/components/schemas/${node.typeName.name}` };
+    }
+
+    console.warn("Unrecognized TypeScript type node:", node);
+
     return {};
   }
 
