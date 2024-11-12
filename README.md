@@ -1,12 +1,10 @@
 # next-openapi-gen
 
-**next-openapi-gen** super fast and easy way to generate OpenAPI 3.0 documentation automatically from API routes in a Next.js 14.
-
-With support for multiple user interfaces next-openapi-gen makes documenting your API a breeze!
+**next-openapi-gen** super fast and easy way to generate OpenAPI 3.0 documentation automatically from API routes in NextJS.
 
 ## Prerequisites
 
-- Nextjs >= 14
+- Next.js >= 14
 - Node >= 18
 
 ## Supported interfaces
@@ -20,8 +18,9 @@ With support for multiple user interfaces next-openapi-gen makes documenting you
 
 - **Automatic OpenAPI Generation**: Generate OpenAPI 3.0 documentation from your Next.js routes, automatically parsing TypeScript types for parameters, request bodies and responses.
 - **TypeScript Type Scanning**: Automatically resolve TypeScript types for params, body, and responses based on your API endpoint's TypeScript definitions. Field comments in TypeScript types are reflected as descriptions in the OpenAPI schema.
-- **JSDoc-Based Documentation (Optional)**:  Document API routes with JSDoc comments, including tags like `@openapi`, `@auth`, `@desc`, `@params`, `@body`, and `@response` to easily define route metadata.
-- **UI Interface Options**: Choose between `Swagger UI`, `Redoc`, `Stoplight Elements` or `RapiDoc` to visualize your API documentation. Customize the interface to fit your preferences.
+- **Support for Complex TypeScript Types**: Support complex TypeScript types, such as `nested objects`, `arrays`, `enums` and `unions` (mapped to anyOf in OpenAPI). This enables a more comprehensive representation of data structures directly in the OpenAPI schema.
+- **JSDoc-Based Documentation**:  Document API routes with optional JSDoc comments, including tags like `@openapi`, `@auth`, `@desc`, `@params`, `@body`, and `@response` to easily define route metadata.
+- **Multiple UI Interfaces**: Choose between `Swagger UI`, `Redoc`, `Stoplight Elements` or `RapiDoc` to visualize your API documentation. Customize the interface to fit your preferences.
 - **Real-time Documentation**: As your API evolves, regenerate the OpenAPI documentation with a single command, ensuring your documentation is always up to date.
 - **Easy configuration**: Customize generator behavior using the `next.openapi.json` configuration file, allowing for quick adjustments without modifying the code.
 
@@ -57,41 +56,76 @@ This command does the following:
 
 Annotate your API routes using JSDoc comments. Here's an example:
 
+
 ```typescript
-//app/api/auth/reset-password/route.ts
+//app/api/auth/login/route.ts
 
-import { type NextRequest } from "next/server";
-
-type ResetPasswordParams = {
-  token: string; // Token for resetting the password
+type LoginBody = {
+  email: string; // user email
+  password: string; // user password
 };
 
-type ResetPasswordBody = {
-  password: string; // The new password for the user
-};
-
-type ResetPasswordResponse = {
-  message: string; // Confirmation message that password has been reset
+type LoginResponse = {
+  token: string; // auth token
+  refresh_token: string; // refresh token
 };
 
 /**
- * Reset the user's password.
- * @auth: bearer
- * @desc: Allows users to reset their password using a reset token.
- * @params: ResetPasswordParams
- * @body: ResetPasswordBody
- * @response: ResetPasswordResponse
+ * Authenticate as a user.
+ * @desc: Login a user
+ * @body: LoginBody
+ * @response: LoginResponse
  */
 export async function POST(req: Request) {
-  const searchParams = req.nextUrl.searchParams;
-
-  const token = searchParams.get("token"); // Token from query params
-  const { password } = await req.json(); // New password from request body
-
-  // Logic to reset the user's password
-
-  return Response.json({ message: "Password has been reset" });
+  ...
 }
+```
+
+```typescript
+//app/api/users/route.ts
+
+enum ROLE {
+  OWNER,
+  MEMBER,
+}
+
+type User = {
+  id: number;
+  name: string;
+  email: string;
+  role: ROLE;
+  address: Address;
+};
+
+type Address = {
+  line1: string;
+  line2?: string;
+  city: string;
+  postalCode: string;
+};
+
+type UsersParams = {
+  search: string; // search by
+  role?: ROLE; // filter by role
+  page?: number; // page number
+};
+
+type UsersResponse = {
+  page?: number;
+  count?: number;
+  data: User[];
+};
+
+/**
+ * List all users.
+ * @auth: bearer
+ * @params: UsersParams
+ * @response: UsersResponse
+ */
+export async function GET(req: Request) {
+  ...
+}
+
 ```
 
 - `@openapi`: Marks the route for inclusion in the OpenAPI specification.
