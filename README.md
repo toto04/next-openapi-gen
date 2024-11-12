@@ -7,7 +7,7 @@
 - Next.js >= 14
 - Node >= 18
 
-## Supported interfaces
+## Interfaces
 
 - Swagger
 - Redoc
@@ -16,15 +16,12 @@
 
 ## Features
 
-- **Automatic OpenAPI Generation**: Generate OpenAPI 3.0 documentation from your Next.js routes, automatically parsing TypeScript types for parameters, request bodies and responses.
-- **TypeScript Type Scanning**: Automatically resolve TypeScript types for params, body, and responses based on your API endpoint's TypeScript definitions. Field comments in TypeScript types are reflected as descriptions in the OpenAPI schema.
-- **Support for Complex TypeScript Types**: Support complex TypeScript types, such as `nested objects`, `arrays`, `enums` and `unions` (mapped to anyOf in OpenAPI). This enables a more comprehensive representation of data structures directly in the OpenAPI schema.
-- **JSDoc-Based Documentation**:  Document API routes with optional JSDoc comments, including tags like `@openapi`, `@auth`, `@desc`, `@params`, `@body`, and `@response` to easily define route metadata.
+- **Automatic OpenAPI Generation**: Generate OpenAPI 3.0 documentation from your Next.js routes, automatically parsing TypeScript types for parameters, request bodies and responses. Field comments in TypeScript types are reflected as descriptions in the OpenAPI schema.
+- **Complex TypeScript Types**: Use complex TypeScript types, such as `nested objects`, `arrays`, `enums` and `unions` (mapped to anyOf in OpenAPI). This enables a more comprehensive representation of data structures directly in the OpenAPI schema.
+- **JSDoc-Based Documentation**: Document API routes with optional JSDoc comments, including tags like `@openapi`, `@auth`, `@desc`, `@params`, `@body`, and `@response` to easily define route metadata.
 - **Multiple UI Interfaces**: Choose between `Swagger UI`, `Redoc`, `Stoplight Elements` or `RapiDoc` to visualize your API documentation. Customize the interface to fit your preferences.
 - **Real-time Documentation**: As your API evolves, regenerate the OpenAPI documentation with a single command, ensuring your documentation is always up to date.
 - **Easy configuration**: Customize generator behavior using the `next.openapi.json` configuration file, allowing for quick adjustments without modifying the code.
-
-![Demo File](https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/demo.gif)
 
 ## Installation
 
@@ -56,84 +53,103 @@ This command does the following:
 
 Annotate your API routes using JSDoc comments. Here's an example:
 
+<div align="center">
+  <table>
+    <tr>
+      <th>Login route</th>
+      <th>Swagger</th>
+    </tr>
+    <tr>
+      <td>
 
-```typescript
-//app/api/auth/login/route.ts
+  ```typescript
+  //app/api/auth/login/route.ts
 
-type LoginBody = {
-  email: string; // user email
-  password: string; // user password
-};
+  type LoginBody = {
+    email: string; // user email
+    password: string; // user password
+  };
 
-type LoginResponse = {
-  token: string; // auth token
-  refresh_token: string; // refresh token
-};
+  type LoginResponse = {
+    token: string; // auth token
+    refresh_token: string; // refresh token
+  };
 
-/**
- * Authenticate as a user.
- * @desc: Login a user
- * @body: LoginBody
- * @response: LoginResponse
- */
-export async function POST(req: Request) {
-  ...
-}
-```
+  /**
+   * Authenticate as a user.
+   * @desc: Login a user
+   * @body: LoginBody
+   * @response: LoginResponse
+   */
+  export async function POST(req: Request) {
+    ...
+  }
+  ```
+  </td>
+  <td>
+    <img width="340" alt="api-login" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/swagger.png" alt-text="api-login"/>
+  </td>
+  </tr>
 
-```typescript
-//app/api/users/route.ts
+  <tr>
+      <th>Users route</th>
+      <th>Swagger</th>
+    </tr>
+  <tr>
+      <td>
 
-enum ROLE {
-  OWNER,
-  MEMBER,
-}
+  ```typescript
+  //app/api/users/route.ts
 
-type User = {
-  id: number;
-  name: string;
-  email: string;
-  role: ROLE;
-  address: Address;
-};
+  enum ROLE {
+    OWNER,
+    MEMBER,
+  }
 
-type Address = {
-  line1: string;
-  line2?: string;
-  city: string;
-  postalCode: string;
-};
+  type User = {
+    id: number;
+    name: string;
+    email: string;
+    role: ROLE;
+    address: Address;
+  };
 
-type UsersParams = {
-  search: string; // search by
-  role?: ROLE; // filter by role
-  page?: number; // page number
-};
+  type Address = {
+    line1: string;
+    line2?: string;
+    city: string;
+    postalCode: string;
+  };
 
-type UsersResponse = {
-  page?: number;
-  count?: number;
-  data: User[];
-};
+  type UsersParams = {
+    search: string; // search by
+    role?: ROLE; // filter by role
+    page?: number; // page number
+  };
 
-/**
- * List all users.
- * @auth: bearer
- * @params: UsersParams
- * @response: UsersResponse
- */
-export async function GET(req: Request) {
-  ...
-}
+  type UsersResponse = {
+    page?: number;
+    count?: number;
+    data: User[];
+  };
 
-```
-
-- `@openapi`: Marks the route for inclusion in the OpenAPI specification.
-- `@auth`: Specifies authentication type used for API route (`basic`, `bearer`, `apikey`)
-- `@desc`: Provides a detailed description of the API route.
-- `@params`: Specifies the TypeScript interface for the query parameters.
-- `@body`: Specifies the TypeScript interface for the request body.
-- `@response`: Specifies the TypeScript interface for the response.
+  /**
+   * List all users.
+   * @auth: bearer
+   * @params: UsersParams
+   * @response: UsersResponse
+   */
+  export async function GET(req: Request) {
+    ...
+  }
+  ```
+  </td>
+  <td>
+    <img width="340" alt="api-users" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/api-users.png" alt-text="api-users"/>
+  </td>
+  </tr>
+</table>
+</div>
 
 ### Step 3: Generate the OpenAPI Specification
 
@@ -148,6 +164,15 @@ This command processes all your API routes, extracts the necessary information f
 ### Step 4: View API Documentation
 
 With the `/api-docs` route generated from the init command, you can now access your API documentation through Swagger UI by navigating to `http://localhost:3000/api-docs`.
+
+## JSDoc tags
+
+- `@openapi`: Marks the route for inclusion in the OpenAPI specification.
+- `@auth`: Specifies authentication type used for API route (`basic`, `bearer`, `apikey`).
+- `@desc`: Provides a detailed description of the API route.
+- `@params`: Specifies the TypeScript interface for the query parameters.
+- `@body`: Specifies the TypeScript interface for the request body.
+- `@response`: Specifies the TypeScript interface for the response.
 
 ## Configuration Options
 
