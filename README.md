@@ -87,7 +87,7 @@ Annotate your API routes using JSDoc comments. Here's an example:
   ```
   </td>
   <td>
-    <img width="340" alt="api-login" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/swagger.png" alt-text="api-login"/>
+    <img width="340" alt="api-login" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/api-login.png" alt-text="api-login"/>
   </td>
   </tr>
 
