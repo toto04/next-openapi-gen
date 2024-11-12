@@ -9,13 +9,17 @@ export async function generate() {
   const spinner = ora("Generating OpenAPI specification...\n").start();
 
   const generator = new OpenApiGenerator();
-
-  const apiDocs = generator.generate();
   const config = generator.getConfig();
 
-  // Check if public dir exists
+  // Create api dir if not exists
+  const apiDir = path.resolve(config.apiDir);
+  await fse.ensureDir(apiDir);
+
+  // Create public dir if not exists
   const outputDir = path.resolve("./public");
   await fse.ensureDir(outputDir);
+
+  const apiDocs = generator.generate();
 
   // Write api docs
   const outputFile = path.join(outputDir, config.outputFile);
