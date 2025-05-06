@@ -89,7 +89,7 @@ Annotate your API routes using JSDoc comments. Here's an example:
   </td>
   <td>
     <img width="340" alt="api-login-scalar" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/api-login-scalar.png" alt-text="api-login"/>
-    <br/><br/>
+    <br/><br/><br/>
     <img width="340" alt="api-login-swagger" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/api-login-swagger.png" alt-text="api-login-swagger"/>
   </td>
   </tr>
@@ -149,7 +149,7 @@ Annotate your API routes using JSDoc comments. Here's an example:
   </td>
   <td>
     <img width="340" alt="api-users-scalar" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/api-users-scalar.png" alt-text="api-users-scalar"/>
-    <br/><br/>
+    <br/><br/><br/>
     <img width="340" alt="api-users-swagger" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/api-users-swagger.png" alt-text="api-users-swagger"/>
   </td>
   </tr>
