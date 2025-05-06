@@ -89,6 +89,7 @@ Annotate your API routes using JSDoc comments. Here's an example:
   </td>
   <td>
     <img width="340" alt="api-login-scalar" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/api-login-scalar.png" alt-text="api-login"/>
+    <br/><br/>
     <img width="340" alt="api-login-swagger" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/api-login-swagger.png" alt-text="api-login-swagger"/>
   </td>
   </tr>
@@ -148,6 +149,7 @@ Annotate your API routes using JSDoc comments. Here's an example:
   </td>
   <td>
     <img width="340" alt="api-users-scalar" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/api-users-scalar.png" alt-text="api-users-scalar"/>
+    <br/><br/>
     <img width="340" alt="api-users-swagger" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/api-users-swagger.png" alt-text="api-users-swagger"/>
   </td>
   </tr>
@@ -201,6 +203,9 @@ The `next.openapi.json` file allows you to configure the behavior of the OpenAPI
   </thead>
   <tbody>
    <tr>
+   <td>
+	<img width="320" alt="scalar" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/scalar.png" alt-text="scalar">
+	</td>
     <td>
 	<img width="320" alt="swagger" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/swagger.png" alt-text="swagger">
 	</td>
