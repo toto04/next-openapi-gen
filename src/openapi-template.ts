@@ -23,7 +23,7 @@ export default {
   apiDir: "./src/app/api",
   schemaDir: "./src",
   docsUrl: "api-docs",
-  ui: "swagger",
-  outputFile: "swagger.json",
+  ui: "scalar",
+  outputFile: "openapi.json",
   includeOpenApiRoutes: false,
 };

@@ -6,6 +6,7 @@ import { exec } from "child_process";
 import util from "util";
 
 import openapiTemplate from "../openapi-template.js";
+import { scalarDeps, ScalarUI } from "../components/scalar.js";
 import { swaggerDeps, SwaggerUI } from "../components/swagger.js";
 import { redocDeps, RedocUI } from "../components/redoc.js";
 import { stoplightDeps, StoplightUI } from "../components/stoplight.js";
@@ -40,9 +41,11 @@ const getPackageManager = async () => {
 };
 
 function getDocsPage(ui: string, outputFile: string) {
-  let DocsComponent = SwaggerUI;
+  let DocsComponent = ScalarUI;
 
-  if (ui === "redoc") {
+  if (ui === "swagger") {
+    DocsComponent = SwaggerUI;
+  } else if (ui === "redoc") {
     DocsComponent = RedocUI;
   } else if (ui === "stoplight") {
     DocsComponent = StoplightUI;
@@ -56,7 +59,9 @@ function getDocsPage(ui: string, outputFile: string) {
 function getDocsPageDependencies(ui: string) {
   let deps = [];
 
-  if (ui === "swagger") {
+  if (ui === "scalar") {
+    deps = scalarDeps;
+  } else if (ui === "swagger") {
     deps = swaggerDeps;
   } else if (ui === "redoc") {
     deps = redocDeps;

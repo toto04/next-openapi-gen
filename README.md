@@ -9,6 +9,7 @@
 
 ## Interfaces
 
+- Scalar
 - Swagger
 - Redoc
 - Stoplight Elements
@@ -19,7 +20,7 @@
 - **Automatic OpenAPI Generation**: Generate OpenAPI 3.0 documentation from your Next.js routes, automatically parsing TypeScript types for parameters, request bodies and responses. Field comments in TypeScript types are reflected as descriptions in the OpenAPI schema.
 - **Complex TypeScript Types**: Use complex TypeScript types, such as `nested objects`, `arrays`, `enums` and `unions` (mapped to anyOf). This enables a more comprehensive representation of data structures directly in the OpenAPI schema.
 - **JSDoc-Based Documentation**: Document API routes with optional JSDoc comments, including tags like `@openapi`, `@auth`, `@desc`, `@params`, `@body`, and `@response` to easily define route metadata.
-- **Multiple UI Interfaces**: Choose between `Swagger UI`, `Redoc`, `Stoplight Elements` or `RapiDoc` to visualize your API documentation. Customize the interface to fit your preferences.
+- **Multiple UI Interfaces**: Choose between `Scalar`, `Swagger UI`, `Redoc`, `Stoplight Elements` or `RapiDoc` to visualize your API documentation. Customize the interface to fit your preferences.
 - **Real-time Documentation**: As your API evolves, regenerate the OpenAPI documentation with a single command, ensuring your documentation is always up to date.
 - **Easy configuration**: Customize generator behavior using the `next.openapi.json` configuration file, allowing for quick adjustments without modifying the code.
 
@@ -33,20 +34,20 @@ yarn add next-openapi-gen
 
 ### Step 1: Initialize Configuration and Setup
 
-Run the following command to generate the `next.openapi.json` configuration file and automatically set up Swagger UI with `/api-docs` routes:
+Run the following command to generate the `next.openapi.json` configuration file and automatically set up Scalar UI with `/api-docs` routes:
 
 ```bash
-npx next-openapi-gen init --ui swagger --docs-url api-docs
+npx next-openapi-gen init --ui scalar --docs-url api-docs
 ```
 
 Parameters:
-- **ui**: `swagger` | `redoc` | `stoplight` | `rapidoc`
+- **ui**: `scalar` | `swagger` | `redoc` | `stoplight` | `rapidoc`
 - **docs-url**: url on which api docs will be visible
 
 This command does the following:
 
 - Generates a `next.openapi.json` file, which stores the OpenAPI configuration for your project.
-- Installs Swagger UI to provide an API documentation interface.
+- Installs Scalar UI to provide an API documentation interface.
 - Adds an `/api-docs` route in the Next.js app for visualizing the generated OpenAPI documentation.
 
 ### Step 2: Add JSDoc Comments to Your API Routes
@@ -57,7 +58,7 @@ Annotate your API routes using JSDoc comments. Here's an example:
   <table>
     <tr>
       <th>Login route</th>
-      <th>Swagger</th>
+      <th>Scalar / Swagger</th>
     </tr>
     <tr>
       <td>
@@ -87,13 +88,14 @@ Annotate your API routes using JSDoc comments. Here's an example:
   ```
   </td>
   <td>
-    <img width="340" alt="api-login" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/api-login.png" alt-text="api-login"/>
+    <img width="340" alt="api-login-scalar" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/api-login-scalar.png" alt-text="api-login"/>
+    <img width="340" alt="api-login-swagger" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/api-login-swagger.png" alt-text="api-login-swagger"/>
   </td>
   </tr>
 
   <tr>
       <th>Users route</th>
-      <th>Swagger</th>
+      <th>Scalar / Swagger</th>
     </tr>
   <tr>
       <td>
@@ -145,7 +147,8 @@ Annotate your API routes using JSDoc comments. Here's an example:
   ```
   </td>
   <td>
-    <img width="340" alt="api-users" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/api-users.png" alt-text="api-users"/>
+    <img width="340" alt="api-users-scalar" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/api-users-scalar.png" alt-text="api-users-scalar"/>
+    <img width="340" alt="api-users-swagger" src="https://raw.githubusercontent.com/tazo90/next-openapi-gen/refs/heads/main/assets/api-users-swagger.png" alt-text="api-users-swagger"/>
   </td>
   </tr>
 </table>
@@ -159,11 +162,11 @@ Run the following command to generate the OpenAPI schema based on your API route
 npx next-openapi-gen generate
 ```
 
-This command processes all your API routes, extracts the necessary information from JSDoc comments, and generates the OpenAPI schema, typically saved to a `swagger.json` file in the `public` folder.
+This command processes all your API routes, extracts the necessary information from JSDoc comments, and generates the OpenAPI schema, typically saved to a `openapi.json` file in the `public` folder.
 
 ### Step 4: View API Documentation
 
-With the `/api-docs` route generated from the init command, you can now access your API documentation through Swagger UI by navigating to `http://localhost:3000/api-docs`.
+With the `/api-docs` route generated from the init command, you can now access your API documentation through Scalar UI by navigating to `http://localhost:3000/api-docs`.
 
 ## JSDoc tags
 
@@ -181,8 +184,8 @@ The `next.openapi.json` file allows you to configure the behavior of the OpenAPI
 - **apiDir**: (default: `./src/app/api`) The directory where your API routes are stored.
 - **schemaDir**: (default: `./src`) The directory where your schema definitions are stored.
 - **docsUrl**: (default: `./api-docs`) Route where OpenAPI UI is available.
-- **ui**: (default: `swagger`) OpenAPI UI interface.
-- **outputFile**: (default: `./swagger.json`) The file where the generated OpenAPI specification will be saved in `public` folder.
+- **ui**: (default: `scalar`) OpenAPI UI interface.
+- **outputFile**: (default: `./openapi.json`) The file where the generated OpenAPI specification will be saved in `public` folder.
 - **includeOpenApiRoutes**: (default: `false`) When `true`, the generator will only include routes that have the `@openapi` tag in their JSDoc comments.
 
 ## Interface providers
@@ -190,7 +193,8 @@ The `next.openapi.json` file allows you to configure the behavior of the OpenAPI
 <div align="center">
 <table>
   <thead>
-   <th>SwaggerUI</th>
+   <th>Scalar</th>
+   <th>Swagger</th>
    <th>Redoc</th>
    <th>Stoplight Elements</th>
    <th>RapiDoc</th>
