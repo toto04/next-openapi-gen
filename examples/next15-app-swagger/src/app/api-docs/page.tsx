@@ -10,5 +10,5 @@ const SwaggerUI = dynamic(() => import("swagger-ui-react"), {
 });
 
 export default function ApiDocsPage() {
-  return <SwaggerUI url="/swagger.json" />;
+  return <SwaggerUI url="/openapi.json" />;
 }
