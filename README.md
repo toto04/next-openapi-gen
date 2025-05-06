@@ -9,7 +9,7 @@
 
 ## Interfaces
 
-- Scalar <span style="position: relative; bottom: 2px; background-color: #25c2a0; color: white; padding: 1px 5px; border-radius: 10px; font-size: 0.6em; font-weight: bold; margin-left: 5px;">NEW</span>
+- Scalar 🆕
 - Swagger
 - Redoc
 - Stoplight Elements
