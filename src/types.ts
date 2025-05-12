@@ -51,6 +51,7 @@ export type Property = {
   required?: boolean;
   nullable?: boolean;
   enum?: any;
+  example?: string;
   schema?: {
     type: string;
     enum?: any;

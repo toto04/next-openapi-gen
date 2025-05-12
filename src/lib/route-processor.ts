@@ -5,7 +5,12 @@ import traverse from "@babel/traverse";
 import { parse } from "@babel/parser";
 
 import { SchemaProcessor } from "./schema-processor.js";
-import { capitalize, extractJSDocComments, getOperationId } from "./utils.js";
+import {
+  capitalize,
+  extractJSDocComments,
+  extractPathParameters,
+  getOperationId,
+} from "./utils.js";
 import { DataTypes, OpenApiConfig, RouteDefinition } from "../types.js";
 
 const HTTP_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"];
