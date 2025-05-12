@@ -11,7 +11,7 @@ export class SchemaProcessor {
   private typeDefinitions: any = {};
   private openapiDefinitions: any = {};
   private contentType: string = "";
-  
+
   private directoryCache: Record<string, string[]> = {};
   private statCache: Record<string, fs.Stats> = {};
   private processSchemaTracker: Record<string, boolean> = {};
@@ -133,7 +133,9 @@ export class SchemaProcessor {
   }
 
   private isDateObject(node) {
-    return t.isNewExpression(node) && t.isIdentifier(node.callee, { name: "Date" });
+    return (
+      t.isNewExpression(node) && t.isIdentifier(node.callee, { name: "Date" })
+    );
   }
 
   private isDateNode(node) {
@@ -240,9 +242,7 @@ export class SchemaProcessor {
   }
 
   private getPropertyOptions(node) {
-    const key = node.key.name;
     const isOptional = !!node.optional; // check if property is optional
-    const typeName = node.typeAnnotation?.typeAnnotation?.typeName?.name;
 
     let description = null;
     // get comments for field
@@ -265,6 +265,77 @@ export class SchemaProcessor {
     return options;
   }
 
+  /**
+   * Generate example values based on parameter type and name
+   */
+  public getExampleForParam(paramName: string, type: string = "string"): any {
+    // Common ID-like parameters
+    if (
+      paramName === "id" ||
+      paramName.endsWith("Id") ||
+      paramName.endsWith("_id")
+    ) {
+      return type === "string" ? "123abc" : 123;
+    }
+
+    // For specific common parameter names
+    switch (paramName.toLowerCase()) {
+      case "slug":
+        return "example-slug";
+      case "uuid":
+        return "123e4567-e89b-12d3-a456-426614174000";
+      case "username":
+        return "johndoe";
+      case "email":
+        return "user@example.com";
+      case "name":
+        return "example-name";
+      case "date":
+        return "2023-01-01";
+      case "page":
+        return 1;
+      default:
+        // Default examples by type
+        if (type === "string") return "example";
+        if (type === "number") return 1;
+        if (type === "boolean") return true;
+        return "example";
+    }
+  }
+
+  /**
+   * Create a default schema for path parameters when no schema is defined
+   */
+  public createDefaultPathParamsSchema(paramNames: string[]): any[] {
+    return paramNames.map((paramName) => {
+      // Guess the parameter type based on the name
+      let type: string = "string";
+      if (
+        paramName === "id" ||
+        paramName.endsWith("Id") ||
+        paramName === "page" ||
+        paramName === "limit" ||
+        paramName === "size" ||
+        paramName === "count"
+      ) {
+        type = "number";
+      }
+
+      const example = this.getExampleForParam(paramName, type);
+
+      return {
+        name: paramName,
+        in: "path",
+        required: true,
+        schema: {
+          type: type,
+        },
+        example: example,
+        description: `Path parameter: ${paramName}`,
+      };
+    });
+  }
+
   public createRequestParamsSchema(params: Params, isPathParam = false) {
     const queryParams = [];
 
@@ -276,7 +347,7 @@ export class SchemaProcessor {
           schema: {
             type: value.type,
           },
-          required: value.required,
+          required: isPathParam ? true : value.required, // Path parameters are always required
         };
 
         if (value.enum) {
@@ -286,6 +357,12 @@ export class SchemaProcessor {
         if (value.description) {
           param.description = value.description;
           param.schema.description = value.description;
+        }
+
+        // Add examples for path parameters
+        if (isPathParam) {
+          const example = this.getExampleForParam(name, value.type);
+          param.example = example;
         }
 
         queryParams.push(param);
@@ -317,7 +394,12 @@ export class SchemaProcessor {
     };
   }
 
-  public getSchemaContent({ paramsType, pathParamsType, bodyType, responseType }) {
+  public getSchemaContent({
+    paramsType,
+    pathParamsType,
+    bodyType,
+    responseType,
+  }) {
     let params = this.openapiDefinitions[paramsType];
     let pathParams = this.openapiDefinitions[pathParamsType];
     let body = this.openapiDefinitions[bodyType];
@@ -332,8 +414,8 @@ export class SchemaProcessor {
       this.findSchemaDefinition(pathParamsType, "pathParams");
       pathParams = this.openapiDefinitions[pathParamsType];
     }
-      
-    if (bodyType && ! body) {
+
+    if (bodyType && !body) {
       this.findSchemaDefinition(bodyType, "body");
       body = this.openapiDefinitions[bodyType];
     }

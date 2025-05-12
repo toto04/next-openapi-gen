@@ -6,6 +6,22 @@ export function capitalize(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+/**
+ * Extract path parameters from a route path
+ * e.g. /users/{id}/posts/{postId} -> ['id', 'postId']
+ */
+export function extractPathParameters(routePath: string): string[] {
+  const paramRegex = /{([^}]+)}/g;
+  const params: string[] = [];
+  let match;
+
+  while ((match = paramRegex.exec(routePath)) !== null) {
+    params.push(match[1]);
+  }
+
+  return params;
+}
+
 export function extractJSDocComments(path: NodePath): DataTypes {
   const comments = path.node.leadingComments;
   let summary = "";
@@ -104,9 +120,37 @@ export function cleanSpec(spec: any) {
 
   propsToRemove.forEach((key) => delete newSpec[key]);
 
+  // Process paths to ensure good examples for path parameters
+  if (newSpec.paths) {
+    Object.keys(newSpec.paths).forEach((path) => {
+      // Check if path contains parameters
+      if (path.includes("{") && path.includes("}")) {
+        // For each HTTP method in this path
+        Object.keys(newSpec.paths[path]).forEach((method) => {
+          const operation = newSpec.paths[path][method];
+
+          // Set example properties for each path parameter
+          if (operation.parameters) {
+            operation.parameters.forEach((param) => {
+              if (param.in === "path" && !param.example) {
+                // Generate an example based on parameter name
+                if (param.name === "id" || param.name.endsWith("Id")) {
+                  param.example = 123;
+                } else if (param.name === "slug") {
+                  param.example = "example-slug";
+                } else {
+                  param.example = "example";
+                }
+              }
+            });
+          }
+        });
+      }
+    });
+  }
+
   return newSpec;
 }
-
 export function getOperationId(routePath: string, method: string) {
   const operation = routePath.replaceAll(/\//g, "-").replace(/^-/, "");
 

@@ -32,7 +32,7 @@ export class RouteProcessor {
   private processFile(filePath: string) {
     // Check if the file has already been processed
     if (this.processFileTracker[filePath]) return;
-  
+
     const content = fs.readFileSync(filePath, "utf-8");
     const ast = parse(content, {
       sourceType: "module",
@@ -50,7 +50,10 @@ export class RouteProcessor {
           const dataTypes = extractJSDocComments(path);
           if (this.isRoute(declaration.id.name)) {
             // Don't bother adding routes for processing if only including OpenAPI routes and the route is not OpenAPI
-            if (!this.config.includeOpenApiRoutes || (this.config.includeOpenApiRoutes && dataTypes.isOpenApi))
+            if (
+              !this.config.includeOpenApiRoutes ||
+              (this.config.includeOpenApiRoutes && dataTypes.isOpenApi)
+            )
               this.addRouteToPaths(declaration.id.name, filePath, dataTypes);
           }
         }
@@ -61,12 +64,11 @@ export class RouteProcessor {
               if (this.isRoute(decl.id.name)) {
                 const dataTypes = extractJSDocComments(path);
                 // Don't bother adding routes for processing if only including OpenAPI routes and the route is not OpenAPI
-                if (!this.config.includeOpenApiRoutes || (this.config.includeOpenApiRoutes && dataTypes.isOpenApi))
-                  this.addRouteToPaths(
-                    decl.id.name,
-                    filePath,
-                    dataTypes
-                  );
+                if (
+                  !this.config.includeOpenApiRoutes ||
+                  (this.config.includeOpenApiRoutes && dataTypes.isOpenApi)
+                )
+                  this.addRouteToPaths(decl.id.name, filePath, dataTypes);
               }
             }
           });
@@ -95,8 +97,10 @@ export class RouteProcessor {
       if (stat.isDirectory()) {
         this.scanApiRoutes(filePath);
         // @ts-ignore
-      } else if (file.endsWith(".ts")) {
-        this.processFile(filePath);
+      } else if (file.endsWith(".ts") || file.endsWith(".tsx")) {
+        if (file === "route.ts" || file === "route.tsx") {
+          this.processFile(filePath);
+        }
       }
     });
   }
@@ -145,8 +149,28 @@ export class RouteProcessor {
       definition.parameters =
         this.schemaProcessor.createRequestParamsSchema(params);
     }
-    if (pathParams) {
-      const moreParams = this.schemaProcessor.createRequestParamsSchema(pathParams, true);
+
+    // Add path parameters
+    const pathParamNames = extractPathParameters(routePath);
+    if (pathParamNames.length > 0) {
+      // If we have path parameters but no schema, create a default schema
+      if (!pathParams) {
+        const defaultPathParams =
+          this.schemaProcessor.createDefaultPathParamsSchema(pathParamNames);
+        definition.parameters.push(...defaultPathParams);
+      } else {
+        const moreParams = this.schemaProcessor.createRequestParamsSchema(
+          pathParams,
+          true
+        );
+        definition.parameters.push(...moreParams);
+      }
+    } else if (pathParams) {
+      // If no path parameters in route but we have a schema, use it
+      const moreParams = this.schemaProcessor.createRequestParamsSchema(
+        pathParams,
+        true
+      );
       definition.parameters.push(...moreParams);
     }
 
@@ -165,14 +189,35 @@ export class RouteProcessor {
   }
 
   private getRoutePath(filePath: string): string {
+    // First, check if it's an app router path
+    if (filePath.includes("/app/api/")) {
+      // Get the relative path from the api directory
+      const apiDirPos = filePath.indexOf("/app/api/");
+      let relativePath = filePath.substring(apiDirPos + "/app/api".length);
+
+      // Remove the /route.ts or /route.tsx suffix
+      relativePath = relativePath.replace(/\/route\.tsx?$/, "");
+
+      // Convert directory separators to URL path format
+      relativePath = relativePath.replaceAll("\\", "/");
+
+      // Convert Next.js dynamic route syntax to OpenAPI parameter syntax
+      relativePath = relativePath.replace(/\/\[([^\]]+)\]/g, "/{$1}");
+
+      // Handle catch-all routes ([...param])
+      relativePath = relativePath.replace(/\/\[\.\.\.(.*)\]/g, "/{$1}");
+
+      return relativePath;
+    }
+
+    // For pages router or other formats
     const suffixPath = filePath.split("api")[1];
     return suffixPath
-      .replace("route.ts", "")
+      .replace(/route\.tsx?$/, "")
       .replaceAll("\\", "/")
       .replace(/\/$/, "")
-      // Turns NextJS-style dynamic routes into OpenAPI-style dynamic routes
-      .replaceAll("[", "{")
-      .replaceAll("]", "}");
+      .replace(/\/\[([^\]]+)\]/g, "/{$1}") // Replace [param] with {param}
+      .replace(/\/\[\.\.\.(.*)\]/g, "/{$1}"); // Replace [...param] with {param}
   }
 
   private getSortedPaths(paths: Record<string, any>) {
