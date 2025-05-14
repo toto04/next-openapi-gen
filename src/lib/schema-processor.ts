@@ -15,6 +15,7 @@ export class SchemaProcessor {
   private directoryCache: Record<string, string[]> = {};
   private statCache: Record<string, fs.Stats> = {};
   private processSchemaTracker: Record<string, boolean> = {};
+  private processingTypes = new Set();
 
   constructor(schemaDir: string) {
     this.schemaDir = path.resolve(schemaDir);
@@ -84,44 +85,59 @@ export class SchemaProcessor {
   }
 
   private resolveType(typeName: string) {
-    const typeNode = this.typeDefinitions[typeName.toString()];
-    if (!typeNode) return {};
-
-    if (t.isTSEnumDeclaration(typeNode)) {
-      const enumValues = this.processEnum(typeNode);
-      return enumValues;
+    if (this.processingTypes.has(typeName)) {
+      // Return reference to type to avoid infinite recursion
+      return { $ref: `#/components/schemas/${typeName}` };
     }
 
-    if (t.isTSTypeLiteral(typeNode) || t.isTSInterfaceBody(typeNode)) {
-      const properties = {};
+    // Add type to precessing types
+    this.processingTypes.add(typeName);
 
-      if ("members" in typeNode) {
-        (typeNode.members || []).forEach((member) => {
-          if (t.isTSPropertySignature(member) && t.isIdentifier(member.key)) {
-            const propName = member.key.name;
-            const options = this.getPropertyOptions(member);
+    try {
+      const typeNode = this.typeDefinitions[typeName.toString()];
+      if (!typeNode) return {};
 
-            const property = {
-              ...this.resolveTSNodeType(member.typeAnnotation?.typeAnnotation),
-              ...options,
-            };
-
-            properties[propName] = property;
-          }
-        });
+      if (t.isTSEnumDeclaration(typeNode)) {
+        const enumValues = this.processEnum(typeNode);
+        return enumValues;
       }
 
-      return { type: "object", properties };
-    }
+      if (t.isTSTypeLiteral(typeNode) || t.isTSInterfaceBody(typeNode)) {
+        const properties = {};
 
-    if (t.isTSArrayType(typeNode)) {
-      return {
-        type: "array",
-        items: this.resolveTSNodeType(typeNode.elementType),
-      };
-    }
+        if ("members" in typeNode) {
+          (typeNode.members || []).forEach((member) => {
+            if (t.isTSPropertySignature(member) && t.isIdentifier(member.key)) {
+              const propName = member.key.name;
+              const options = this.getPropertyOptions(member);
 
-    return {};
+              const property = {
+                ...this.resolveTSNodeType(
+                  member.typeAnnotation?.typeAnnotation
+                ),
+                ...options,
+              };
+
+              properties[propName] = property;
+            }
+          });
+        }
+
+        return { type: "object", properties };
+      }
+
+      if (t.isTSArrayType(typeNode)) {
+        return {
+          type: "array",
+          items: this.resolveTSNodeType(typeNode.elementType),
+        };
+      }
+
+      return {};
+    } finally {
+      // Remove type from processed set after we finish
+      this.processingTypes.delete(typeName);
+    }
   }
 
   private isDateString(node) {
@@ -143,13 +159,95 @@ export class SchemaProcessor {
   }
 
   resolveTSNodeType(node) {
+    if (!node) return { type: "object" }; // Default type for undefined/null
+
     if (t.isTSStringKeyword(node)) return { type: "string" };
     if (t.isTSNumberKeyword(node)) return { type: "number" };
     if (t.isTSBooleanKeyword(node)) return { type: "boolean" };
-    if (this.isDateNode(node)) return { type: "Date" };
+    if (t.isTSAnyKeyword(node) || t.isTSUnknownKeyword(node))
+      return { type: "object" };
+    if (
+      t.isTSVoidKeyword(node) ||
+      t.isTSNullKeyword(node) ||
+      t.isTSUndefinedKeyword(node)
+    )
+      return { type: "null" };
+    if (this.isDateNode(node)) return { type: "string", format: "date-time" };
+
+    // Handle literal types like "admin" | "member" | "guest"
+    if (t.isTSLiteralType(node)) {
+      if (t.isStringLiteral(node.literal)) {
+        return {
+          type: "string",
+          enum: [node.literal.value],
+        };
+      } else if (t.isNumericLiteral(node.literal)) {
+        return {
+          type: "number",
+          enum: [node.literal.value],
+        };
+      } else if (t.isBooleanLiteral(node.literal)) {
+        return {
+          type: "boolean",
+          enum: [node.literal.value],
+        };
+      }
+    }
 
     if (t.isTSTypeReference(node) && t.isIdentifier(node.typeName)) {
       const typeName = node.typeName.name;
+
+      // Special handling for built-in types
+      if (typeName === "Date") {
+        return { type: "string", format: "date-time" };
+      }
+
+      if (typeName === "Array" || typeName === "ReadonlyArray") {
+        if (node.typeParameters && node.typeParameters.params.length > 0) {
+          return {
+            type: "array",
+            items: this.resolveTSNodeType(node.typeParameters.params[0]),
+          };
+        }
+        return { type: "array", items: { type: "object" } };
+      }
+
+      if (typeName === "Record") {
+        if (node.typeParameters && node.typeParameters.params.length > 1) {
+          const keyType = this.resolveTSNodeType(node.typeParameters.params[0]);
+          const valueType = this.resolveTSNodeType(
+            node.typeParameters.params[1]
+          );
+
+          return {
+            type: "object",
+            additionalProperties: valueType,
+          };
+        }
+        return { type: "object", additionalProperties: true };
+      }
+
+      if (
+        typeName === "Partial" ||
+        typeName === "Required" ||
+        typeName === "Readonly"
+      ) {
+        if (node.typeParameters && node.typeParameters.params.length > 0) {
+          return this.resolveTSNodeType(node.typeParameters.params[0]);
+        }
+      }
+
+      if (typeName === "Pick" || typeName === "Omit") {
+        if (node.typeParameters && node.typeParameters.params.length > 0) {
+          return this.resolveTSNodeType(node.typeParameters.params[0]);
+        }
+      }
+
+      // Check if it is a type that we are already processing
+      if (this.processingTypes.has(typeName)) {
+        return { $ref: `#/components/schemas/${typeName}` };
+      }
+
       // Find type definition
       this.findSchemaDefinition(typeName, this.contentType);
 
@@ -177,39 +275,145 @@ export class SchemaProcessor {
     }
 
     if (t.isTSUnionType(node)) {
+      // Handle union types with literal types, like "admin" | "member" | "guest"
+      const literals = node.types.filter((type) => t.isTSLiteralType(type));
+
+      // Check if all union elements are literals
+      if (literals.length === node.types.length) {
+        // All union members are literals, convert to enum
+        const enumValues = literals
+          .map((type) => {
+            if (t.isTSLiteralType(type) && t.isStringLiteral(type.literal)) {
+              return type.literal.value;
+            } else if (
+              t.isTSLiteralType(type) &&
+              t.isNumericLiteral(type.literal)
+            ) {
+              return type.literal.value;
+            } else if (
+              t.isTSLiteralType(type) &&
+              t.isBooleanLiteral(type.literal)
+            ) {
+              return type.literal.value;
+            }
+            return null;
+          })
+          .filter((value) => value !== null);
+
+        if (enumValues.length > 0) {
+          // Check if all enum values are of the same type
+          const firstType = typeof enumValues[0];
+          const sameType = enumValues.every((val) => typeof val === firstType);
+
+          if (sameType) {
+            return {
+              type: firstType,
+              enum: enumValues,
+            };
+          }
+        }
+      }
+
+      // Handling null | undefined in type union
+      const nullableTypes = node.types.filter(
+        (type) =>
+          t.isTSNullKeyword(type) ||
+          t.isTSUndefinedKeyword(type) ||
+          t.isTSVoidKeyword(type)
+      );
+
+      const nonNullableTypes = node.types.filter(
+        (type) =>
+          !t.isTSNullKeyword(type) &&
+          !t.isTSUndefinedKeyword(type) &&
+          !t.isTSVoidKeyword(type)
+      );
+
+      // If a type can be null/undefined, we mark it as nullable
+      if (nullableTypes.length > 0 && nonNullableTypes.length === 1) {
+        const mainType = this.resolveTSNodeType(nonNullableTypes[0]);
+        return {
+          ...mainType,
+          nullable: true,
+        };
+      }
+
+      // Standard union type support via oneOf
       return {
-        anyOf: node.types.map((subNode) => this.resolveTSNodeType(subNode)),
+        oneOf: node.types
+          .filter(
+            (type) =>
+              !t.isTSNullKeyword(type) &&
+              !t.isTSUndefinedKeyword(type) &&
+              !t.isTSVoidKeyword(type)
+          )
+          .map((subNode) => this.resolveTSNodeType(subNode)),
       };
     }
 
-    // case where a type is a reference to another defined type
+    if (t.isTSIntersectionType(node)) {
+      // For intersection types, we combine properties
+      const allProperties = {};
+      const requiredProperties = [];
+
+      node.types.forEach((typeNode) => {
+        const resolvedType = this.resolveTSNodeType(typeNode);
+        if (resolvedType.type === "object" && resolvedType.properties) {
+          Object.entries(resolvedType.properties).forEach(([key, value]) => {
+            allProperties[key] = value;
+            if (value.required) {
+              requiredProperties.push(key);
+            }
+          });
+        }
+      });
+
+      return {
+        type: "object",
+        properties: allProperties,
+        required:
+          requiredProperties.length > 0 ? requiredProperties : undefined,
+      };
+    }
+
+    // Case where a type is a reference to another defined type
     if (t.isTSTypeReference(node) && t.isIdentifier(node.typeName)) {
       return { $ref: `#/components/schemas/${node.typeName.name}` };
     }
 
     console.warn("Unrecognized TypeScript type node:", node);
-
-    return {};
+    return { type: "object" }; // By default we return an object
   }
 
   private processSchemaFile(filePath: string, schemaName: string) {
     // Check if the file has already been processed
     if (this.processSchemaTracker[`${filePath}-${schemaName}`]) return;
 
-    // Recognizes different elements of TS like variable, type, interface, enum
-    const content = fs.readFileSync(filePath, "utf-8");
-    const ast = parse(content, {
-      sourceType: "module",
-      plugins: ["typescript", "decorators-legacy"],
-    });
+    try {
+      // Recognizes different elements of TS like variable, type, interface, enum
+      const content = fs.readFileSync(filePath, "utf-8");
+      const ast = parse(content, {
+        sourceType: "module",
+        plugins: ["typescript", "decorators-legacy"],
+      });
 
-    this.collectTypeDefinitions(ast, schemaName);
+      this.collectTypeDefinitions(ast, schemaName);
 
-    const definition = this.resolveType(schemaName);
-    this.openapiDefinitions[schemaName] = definition;
+      // Reset the set of processed types before each schema processing
+      this.processingTypes.clear();
 
-    this.processSchemaTracker[`${filePath}-${schemaName}`] = true;
-    return definition;
+      const definition = this.resolveType(schemaName);
+      this.openapiDefinitions[schemaName] = definition;
+
+      this.processSchemaTracker[`${filePath}-${schemaName}`] = true;
+      return definition;
+    } catch (error) {
+      console.error(
+        `Error processing schema file ${filePath} for schema ${schemaName}:`,
+        error
+      );
+      return { type: "object" }; // By default we return an empty object on error
+    }
   }
 
   private processEnum(enumNode: t.TSEnumDeclaration): object {

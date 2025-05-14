@@ -40,8 +40,7 @@ export function extractJSDocComments(path: NodePath): DataTypes {
       isOpenApi = commentValue.includes("@openapi");
 
       if (!summary) {
-        const summaryIndex = isOpenApi ? 1 : 0;
-        summary = commentValue.split("\n")[summaryIndex];
+        summary = commentValue.split("\n")[0];
       }
 
       if (commentValue.includes("@auth")) {
@@ -100,7 +99,7 @@ export function extractTypeFromComment(
   commentValue: string,
   tag: string
 ): string {
-  return commentValue.match(new RegExp(`${tag}\\s*:\\s*(\\w+)`))?.[1] || "";
+  return commentValue.match(new RegExp(`${tag}\\s*\\s*(\\w+)`))?.[1] || "";
 }
 
 export function cleanComment(commentValue: string): string {
