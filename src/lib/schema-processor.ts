@@ -361,6 +361,7 @@ export class SchemaProcessor {
         if (resolvedType.type === "object" && resolvedType.properties) {
           Object.entries(resolvedType.properties).forEach(([key, value]) => {
             allProperties[key] = value;
+            // @ts-ignore
             if (value.required) {
               requiredProperties.push(key);
             }
