@@ -75,48 +75,117 @@
         }
       }
     },
-    "/users": {
+    "/organizations/{orgId}/projects/{projectId}/tasks/{taskId}/comments": {
       "get": {
-        "operationId": "get-users",
-        "summary": "List all users.",
-        "description": "",
+        "operationId": "get-organizations-{orgId}-projects-{projectId}-tasks-{taskId}-comments",
+        "summary": "Get Task Comments",
+        "description": "Retrieve comments for a specific task within a project and organization",
         "tags": [
-          "Users"
+          "Organizations"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
         ],
         "parameters": [
-          {
-            "in": "query",
-            "name": "search",
-            "schema": {
-              "type": "string",
-              "description": "search by"
-            },
-            "required": true,
-            "description": "search by"
-          },
-          {
-            "in": "query",
-            "name": "role",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "OWNER",
-                "MEMBER"
-              ],
-              "description": "filter by role"
-            },
-            "required": false,
-            "description": "filter by role"
-          },
           {
             "in": "query",
             "name": "page",
             "schema": {
               "type": "number",
-              "description": "page number"
+              "description": "Page number for pagination"
             },
             "required": false,
-            "description": "page number"
+            "description": "Page number for pagination"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "number",
+              "description": "Number of comments per page"
+            },
+            "required": false,
+            "description": "Number of comments per page"
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "newest",
+                "oldest",
+                "likes"
+              ],
+              "description": "Sort order"
+            },
+            "required": false,
+            "description": "Sort order"
+          },
+          {
+            "in": "query",
+            "name": "includeDeleted",
+            "schema": {
+              "type": "boolean",
+              "description": "Whether to include soft-deleted comments"
+            },
+            "required": false,
+            "description": "Whether to include soft-deleted comments"
+          },
+          {
+            "in": "query",
+            "name": "includeReplies",
+            "schema": {
+              "type": "boolean",
+              "description": "Whether to include replies"
+            },
+            "required": false,
+            "description": "Whether to include replies"
+          },
+          {
+            "in": "query",
+            "name": "user",
+            "schema": {
+              "type": "string",
+              "description": "Filter by user ID"
+            },
+            "required": false,
+            "description": "Filter by user ID"
+          },
+          {
+            "in": "path",
+            "name": "orgId",
+            "schema": {
+              "type": "string",
+              "description": "Organization ID"
+            },
+            "required": true,
+            "description": "Organization ID",
+            "example": "123abc"
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "schema": {
+              "type": "string",
+              "description": "Project ID within the organization"
+            },
+            "required": true,
+            "description": "Project ID within the organization",
+            "example": "123abc"
+          },
+          {
+            "in": "path",
+            "name": "taskId",
+            "schema": {
+              "type": "string",
+              "description": "Task ID within the project"
+            },
+            "required": true,
+            "description": "Task ID within the project",
+            "example": "123abc"
           }
         ],
         "responses": {
@@ -127,50 +196,855 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "page": {
-                      "type": "number"
+                    "task": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        }
+                      }
                     },
-                    "count": {
-                      "type": "number"
+                    "project": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
                     },
-                    "data": {
+                    "organization": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "comments": {
                       "type": "array",
                       "items": {
                         "type": "object",
                         "properties": {
                           "id": {
-                            "type": "number"
-                          },
-                          "name": {
-                            "type": "string"
-                          },
-                          "email": {
-                            "type": "string"
-                          },
-                          "role": {
                             "type": "string",
-                            "enum": [
-                              "OWNER",
-                              "MEMBER"
-                            ]
+                            "description": "Comment ID"
                           },
-                          "address": {
+                          "content": {
+                            "type": "string",
+                            "description": "Comment content"
+                          },
+                          "author": {
                             "type": "object",
                             "properties": {
-                              "line1": {
-                                "type": "string"
+                              "id": {
+                                "type": "string",
+                                "description": "User ID"
                               },
-                              "line2": {
-                                "type": "string"
+                              "name": {
+                                "type": "string",
+                                "description": "User's full name"
                               },
-                              "city": {
-                                "type": "string"
+                              "avatar": {
+                                "type": "string",
+                                "description": "URL to user's avatar"
                               },
-                              "postalCode": {
-                                "type": "string"
+                              "role": {
+                                "type": "string",
+                                "enum": [
+                                  "admin",
+                                  "member",
+                                  "guest"
+                                ],
+                                "description": "User's role in the organization"
+                              }
+                            },
+                            "description": "User who created the comment"
+                          },
+                          "attachments": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "description": "Attachment ID"
+                                },
+                                "fileName": {
+                                  "type": "string",
+                                  "description": "Original file name"
+                                },
+                                "fileSize": {
+                                  "type": "number",
+                                  "description": "Size in bytes"
+                                },
+                                "fileType": {
+                                  "type": "string",
+                                  "description": "MIME type"
+                                },
+                                "url": {
+                                  "type": "string",
+                                  "description": "Download URL"
+                                },
+                                "thumbnailUrl": {
+                                  "type": "string",
+                                  "description": "Thumbnail URL for images"
+                                },
+                                "uploadedAt": {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "description": "When the file was uploaded"
+                                }
+                              }
+                            },
+                            "description": "Attached files"
+                          },
+                          "mentions": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "description": "User ID"
+                                },
+                                "name": {
+                                  "type": "string",
+                                  "description": "User's full name"
+                                },
+                                "avatar": {
+                                  "type": "string",
+                                  "description": "URL to user's avatar"
+                                },
+                                "role": {
+                                  "type": "string",
+                                  "enum": [
+                                    "admin",
+                                    "member",
+                                    "guest"
+                                  ],
+                                  "description": "User's role in the organization"
+                                }
+                              }
+                            },
+                            "description": "Users mentioned in the comment"
+                          },
+                          "likes": {
+                            "type": "number",
+                            "description": "Number of likes"
+                          },
+                          "likedBy": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "User IDs who liked the comment"
+                          },
+                          "replyTo": {
+                            "type": "string",
+                            "description": "Parent comment ID if this is a reply"
+                          },
+                          "replies": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/Comment"
+                            },
+                            "description": "Child comments (if includeReplies=true)"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Creation timestamp"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Last update timestamp"
+                          },
+                          "deletedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Soft deletion timestamp"
+                          }
+                        }
+                      },
+                      "description": "List of comments"
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "limit": {
+                          "type": "number"
+                        },
+                        "pages": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "permissions": {
+                      "type": "object",
+                      "properties": {
+                        "canCreate": {
+                          "type": "boolean"
+                        },
+                        "canEdit": {
+                          "type": "boolean"
+                        },
+                        "canDelete": {
+                          "type": "boolean"
+                        },
+                        "canModerate": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "post-organizations-{orgId}-projects-{projectId}-tasks-{taskId}-comments",
+        "summary": "Create Task Comment",
+        "description": "Add a new comment to a specific task",
+        "tags": [
+          "Organizations"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orgId",
+            "schema": {
+              "type": "string",
+              "description": "Organization ID"
+            },
+            "required": true,
+            "description": "Organization ID",
+            "example": "123abc"
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "schema": {
+              "type": "string",
+              "description": "Project ID within the organization"
+            },
+            "required": true,
+            "description": "Project ID within the organization",
+            "example": "123abc"
+          },
+          {
+            "in": "path",
+            "name": "taskId",
+            "schema": {
+              "type": "string",
+              "description": "Task ID within the project"
+            },
+            "required": true,
+            "description": "Task ID within the project",
+            "example": "123abc"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "description": "Comment content",
+                    "nullable": false
+                  },
+                  "attachmentIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "IDs of previously uploaded attachments",
+                    "nullable": true
+                  },
+                  "mentions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "User IDs mentioned in the comment",
+                    "nullable": true
+                  },
+                  "replyTo": {
+                    "type": "string",
+                    "description": "Parent comment ID if this is a reply",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "comment": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Comment ID"
+                        },
+                        "content": {
+                          "type": "string",
+                          "description": "Comment content"
+                        },
+                        "author": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "User ID"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "User's full name"
+                            },
+                            "avatar": {
+                              "type": "string",
+                              "description": "URL to user's avatar"
+                            },
+                            "role": {
+                              "type": "string",
+                              "enum": [
+                                "admin",
+                                "member",
+                                "guest"
+                              ],
+                              "description": "User's role in the organization"
+                            }
+                          },
+                          "description": "User who created the comment"
+                        },
+                        "attachments": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "Attachment ID"
+                              },
+                              "fileName": {
+                                "type": "string",
+                                "description": "Original file name"
+                              },
+                              "fileSize": {
+                                "type": "number",
+                                "description": "Size in bytes"
+                              },
+                              "fileType": {
+                                "type": "string",
+                                "description": "MIME type"
+                              },
+                              "url": {
+                                "type": "string",
+                                "description": "Download URL"
+                              },
+                              "thumbnailUrl": {
+                                "type": "string",
+                                "description": "Thumbnail URL for images"
+                              },
+                              "uploadedAt": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "When the file was uploaded"
                               }
                             }
-                          }
+                          },
+                          "description": "Attached files"
+                        },
+                        "mentions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "User ID"
+                              },
+                              "name": {
+                                "type": "string",
+                                "description": "User's full name"
+                              },
+                              "avatar": {
+                                "type": "string",
+                                "description": "URL to user's avatar"
+                              },
+                              "role": {
+                                "type": "string",
+                                "enum": [
+                                  "admin",
+                                  "member",
+                                  "guest"
+                                ],
+                                "description": "User's role in the organization"
+                              }
+                            }
+                          },
+                          "description": "Users mentioned in the comment"
+                        },
+                        "likes": {
+                          "type": "number",
+                          "description": "Number of likes"
+                        },
+                        "likedBy": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "User IDs who liked the comment"
+                        },
+                        "replyTo": {
+                          "type": "string",
+                          "description": "Parent comment ID if this is a reply"
+                        },
+                        "replies": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Comment"
+                          },
+                          "description": "Child comments (if includeReplies=true)"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Creation timestamp"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Last update timestamp"
+                        },
+                        "deletedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Soft deletion timestamp"
+                        }
+                      },
+                      "description": "Created comment"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether creation was successful"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Success or error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "patch-organizations-{orgId}-projects-{projectId}-tasks-{taskId}-comments",
+        "summary": "Update Task Comment",
+        "description": "Modify an existing comment on a task",
+        "tags": [
+          "Organizations"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orgId",
+            "schema": {
+              "type": "string",
+              "description": "Organization ID"
+            },
+            "required": true,
+            "description": "Organization ID",
+            "example": "123abc"
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "schema": {
+              "type": "string",
+              "description": "Project ID within the organization"
+            },
+            "required": true,
+            "description": "Project ID within the organization",
+            "example": "123abc"
+          },
+          {
+            "in": "path",
+            "name": "taskId",
+            "schema": {
+              "type": "string",
+              "description": "Task ID within the project"
+            },
+            "required": true,
+            "description": "Task ID within the project",
+            "example": "123abc"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "description": "Updated comment content",
+                    "nullable": true
+                  },
+                  "addAttachmentIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "IDs of attachments to add",
+                    "nullable": true
+                  },
+                  "removeAttachmentIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "IDs of attachments to remove",
+                    "nullable": true
+                  },
+                  "addMentions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "User IDs to add to mentions",
+                    "nullable": true
+                  },
+                  "removeMentions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "User IDs to remove from mentions",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "comment": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Comment ID"
+                        },
+                        "content": {
+                          "type": "string",
+                          "description": "Comment content"
+                        },
+                        "author": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "User ID"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "User's full name"
+                            },
+                            "avatar": {
+                              "type": "string",
+                              "description": "URL to user's avatar"
+                            },
+                            "role": {
+                              "type": "string",
+                              "enum": [
+                                "admin",
+                                "member",
+                                "guest"
+                              ],
+                              "description": "User's role in the organization"
+                            }
+                          },
+                          "description": "User who created the comment"
+                        },
+                        "attachments": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "Attachment ID"
+                              },
+                              "fileName": {
+                                "type": "string",
+                                "description": "Original file name"
+                              },
+                              "fileSize": {
+                                "type": "number",
+                                "description": "Size in bytes"
+                              },
+                              "fileType": {
+                                "type": "string",
+                                "description": "MIME type"
+                              },
+                              "url": {
+                                "type": "string",
+                                "description": "Download URL"
+                              },
+                              "thumbnailUrl": {
+                                "type": "string",
+                                "description": "Thumbnail URL for images"
+                              },
+                              "uploadedAt": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "When the file was uploaded"
+                              }
+                            }
+                          },
+                          "description": "Attached files"
+                        },
+                        "mentions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "User ID"
+                              },
+                              "name": {
+                                "type": "string",
+                                "description": "User's full name"
+                              },
+                              "avatar": {
+                                "type": "string",
+                                "description": "URL to user's avatar"
+                              },
+                              "role": {
+                                "type": "string",
+                                "enum": [
+                                  "admin",
+                                  "member",
+                                  "guest"
+                                ],
+                                "description": "User's role in the organization"
+                              }
+                            }
+                          },
+                          "description": "Users mentioned in the comment"
+                        },
+                        "likes": {
+                          "type": "number",
+                          "description": "Number of likes"
+                        },
+                        "likedBy": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "User IDs who liked the comment"
+                        },
+                        "replyTo": {
+                          "type": "string",
+                          "description": "Parent comment ID if this is a reply"
+                        },
+                        "replies": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Comment"
+                          },
+                          "description": "Child comments (if includeReplies=true)"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Creation timestamp"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Last update timestamp"
+                        },
+                        "deletedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Soft deletion timestamp"
+                        }
+                      },
+                      "description": "Updated comment"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether update was successful"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Success or error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete-organizations-{orgId}-projects-{projectId}-tasks-{taskId}-comments",
+        "summary": "Delete Task Comment",
+        "description": "Remove a comment from a task (soft delete)",
+        "tags": [
+          "Organizations"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orgId",
+            "schema": {
+              "type": "string",
+              "description": "Organization ID"
+            },
+            "required": true,
+            "description": "Organization ID",
+            "example": "123abc"
+          },
+          {
+            "in": "path",
+            "name": "projectId",
+            "schema": {
+              "type": "string",
+              "description": "Project ID within the organization"
+            },
+            "required": true,
+            "description": "Project ID within the organization",
+            "example": "123abc"
+          },
+          {
+            "in": "path",
+            "name": "taskId",
+            "schema": {
+              "type": "string",
+              "description": "Task ID within the project"
+            },
+            "required": true,
+            "description": "Task ID within the project",
+            "example": "123abc"
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "operationId": "get-users-{id}",
+        "summary": "Get User by ID",
+        "description": "Retrieves a user's profile information",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "description": "User's unique identifier"
+            },
+            "required": true,
+            "description": "User's unique identifier",
+            "example": "123abc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "User's unique identifier"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "User's full name"
+                    },
+                    "email": {
+                      "type": "string",
+                      "description": "User's email address"
+                    },
+                    "role": {
+                      "type": "string",
+                      "description": "User's role in the system"
+                    },
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "line1": {
+                          "type": "string"
+                        },
+                        "line2": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "postalCode": {
+                          "type": "string"
                         }
                       }
                     }
