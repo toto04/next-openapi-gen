@@ -44,7 +44,7 @@ export function extractJSDocComments(path: NodePath): DataTypes {
       }
 
       if (commentValue.includes("@auth")) {
-        const regex = /@auth:\s*(.*)/;
+        const regex = /@auth\s*(.*)/;
         const value = commentValue.match(regex)[1].trim();
 
         switch (value) {
@@ -61,7 +61,7 @@ export function extractJSDocComments(path: NodePath): DataTypes {
       }
 
       if (commentValue.includes("@desc")) {
-        const regex = /@desc:\s*(.*)/;
+        const regex = /@desc\s*(.*)/;
         description = commentValue.match(regex)[1].trim();
       }
 
