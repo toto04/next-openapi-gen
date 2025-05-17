@@ -1,6 +1,6 @@
 # next-openapi-gen
 
-Automatically generate OpenAPI 3.0 documentation from Next.js projects, with support for both TypeScript types and Zod schemas.
+Automatically generate OpenAPI 3.0 documentation from Next.js projects, with support for TypeScript types and Zod schemas.
 
 ## Features
 
