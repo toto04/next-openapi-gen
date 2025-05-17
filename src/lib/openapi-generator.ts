@@ -21,15 +21,7 @@ export class OpenApiGenerator {
 
   public getConfig() {
     // @ts-ignore
-    const {
-      apiDir,
-      schemaDir,
-      docsUrl,
-      ui,
-      outputFile,
-      includeOpenApiRoutes,
-      schemaType = "typescript",
-    } = this.config;
+    const { apiDir, schemaDir, docsUrl, ui, outputFile, includeOpenApiRoutes, schemaType = "typescript" } = this.template;
 
     return {
       apiDir,
