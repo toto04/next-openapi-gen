@@ -1,6 +1,6 @@
 import { NodePath } from "@babel/traverse";
 
-import { DataTypes } from "../types";
+import { DataTypes } from "../types.js";
 
 export function capitalize(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);

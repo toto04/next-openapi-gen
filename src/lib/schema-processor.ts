@@ -4,14 +4,14 @@ import { parse } from "@babel/parser";
 import traverse from "@babel/traverse";
 import * as t from "@babel/types";
 
-import { ZodSchemaConverter } from "./zod-converter";
+import { ZodSchemaConverter } from "./zod-converter.js";
 import {
   ContentType,
   OpenAPIDefinition,
   ParamSchema,
   PropertyOptions,
   SchemaType,
-} from "../types";
+} from "../types.js";
 
 export class SchemaProcessor {
   private schemaDir: string;

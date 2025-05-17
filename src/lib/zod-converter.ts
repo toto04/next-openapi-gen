@@ -3,7 +3,8 @@ import path from "path";
 import { parse } from "@babel/parser";
 import traverse from "@babel/traverse";
 import * as t from "@babel/types";
-import { OpenApiSchema } from "../types";
+
+import { OpenApiSchema } from "../types.js";
 
 /**
  * Class for converting Zod schemas to OpenAPI specifications

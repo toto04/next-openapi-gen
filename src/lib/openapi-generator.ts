@@ -1,9 +1,9 @@
 import path from "path";
 import fs from "fs";
 
-import { RouteProcessor } from "./route-processor";
-import { cleanSpec } from "./utils";
-import { OpenApiConfig, OpenApiTemplate } from "../types";
+import { RouteProcessor } from "./route-processor.js";
+import { cleanSpec } from "./utils.js";
+import { OpenApiConfig, OpenApiTemplate } from "../types.js";
 
 export class OpenApiGenerator {
   private config: OpenApiConfig;
