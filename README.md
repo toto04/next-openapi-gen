@@ -35,12 +35,12 @@ npm install next-openapi-gen --save-dev
 npx next-openapi-gen init --ui scalar --docs-url api-docs
 
 # Generate OpenAPI documentation
-npx next-openapi generate
+npx next-openapi-gen generate
 ```
 
 ## Configuration
 
-During initialization (`npx next-openapi init`), a configuration file `next.openapi.json` will be created in the project's root directory:
+During initialization (`npx next-openapi-gen init`), a configuration file `next.openapi.json` will be created in the project's root directory:
 
 ```json
 {
@@ -160,7 +160,7 @@ export async function GET(
 ### 1. Initialization
 
 ```bash
-npx next-openapi init
+npx next-openapi-gen init
 ```
 
 This command will generate following elements:
@@ -171,7 +171,7 @@ This command will generate following elements:
 ### 2. Generate Documentation
 
 ```bash
-npx next-openapi generate
+npx next-openapi-gen generate
 ```
 
 This command will generate OpenAPI documentation based on your API code:
