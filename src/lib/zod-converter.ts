@@ -595,6 +595,7 @@ export class ZodSchemaConverter {
           properties[propName] = propSchema;
 
           // If the property is not marked as optional, add it to required list
+          // @ts-ignore
           if (!this.isOptional(prop.value)) {
             required.push(propName);
           }
@@ -668,6 +669,7 @@ export class ZodSchemaConverter {
         ) {
           const enumValues = node.arguments[0].elements
             .filter((el) => t.isStringLiteral(el) || t.isNumericLiteral(el))
+            // @ts-ignore
             .map((el) => el.value);
 
           const firstValue = enumValues[0];
