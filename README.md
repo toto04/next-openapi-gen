@@ -9,7 +9,7 @@ Automatically generate OpenAPI 3.0 documentation from Next.js projects, with sup
 - ✅ TypeScript types support
 - ✅ Zod schemas support
 - ✅ JSDoc comments support
-- ✅ Multiple UI interfaces: `Scalar`, `Swagger`, `Redoc`, `Stoplight` and `Rapidoc` available at `/api-docs` url.
+- ✅ Multiple UI interfaces: `Scalar`, `Swagger`, `Redoc`, `Stoplight` and `Rapidoc` available at `/api-docs` url
 - ✅ Path parameters detection (`/users/{id}`)
 - ✅ Intelligent parameter examples
 - ✅ Intuitive CLI for initialization and documentation generation
