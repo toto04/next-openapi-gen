@@ -447,15 +447,10 @@
     "/orders": {
       "get": {
         "operationId": "get-orders",
-        "summary": "Get orders list",
+        "summary": "Get orders list\r",
         "description": "Retrieves a paginated list of orders with filtering and sorting options",
         "tags": [
           "Orders"
-        ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
         ],
         "parameters": [
           {
@@ -517,6 +512,11 @@
               "description": "Sort results"
             },
             "description": "Sort results"
+          }
+        ],
+        "security": [
+          {
+            "BearerAuth": []
           }
         ],
         "responses": {
@@ -582,17 +582,17 @@
       },
       "post": {
         "operationId": "post-orders",
-        "summary": "Create order",
+        "summary": "Create order\r",
         "description": "Creates a new order from cart",
         "tags": [
           "Orders"
         ],
+        "parameters": [],
         "security": [
           {
             "BearerAuth": []
           }
         ],
-        "parameters": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -723,17 +723,17 @@
     "/orders/{id}": {
       "get": {
         "operationId": "get-orders-{id}",
-        "summary": "Get order by ID",
+        "summary": "Get order by ID\r",
         "description": "Retrieves detailed order information",
         "tags": [
           "Orders"
         ],
+        "parameters": [],
         "security": [
           {
             "BearerAuth": []
           }
         ],
-        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -855,17 +855,17 @@
       },
       "patch": {
         "operationId": "patch-orders-{id}",
-        "summary": "Update order status",
+        "summary": "Update order status\r",
         "description": "Updates the status of an order",
         "tags": [
           "Orders"
         ],
+        "parameters": [],
         "security": [
           {
             "BearerAuth": []
           }
         ],
-        "parameters": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -994,32 +994,36 @@
       },
       "delete": {
         "operationId": "delete-orders-{id}",
-        "summary": "Cancel order",
+        "summary": "Cancel order\r",
         "description": "Cancels an order if it's not already delivered",
         "tags": [
           "Orders"
         ],
+        "parameters": [],
         "security": [
           {
             "BearerAuth": []
           }
         ],
-        "parameters": [],
-        "responses": {}
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
       }
     },
     "/products/{id}": {
       "get": {
         "operationId": "get-products-{id}",
-        "summary": "Get product",
+        "summary": "Get product\r",
         "description": "Retrieves detailed product information by ID",
         "tags": [
           "Products"
-        ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
         ],
         "parameters": [
           {
@@ -1054,7 +1058,12 @@
             },
             "required": true,
             "description": "Unique product identifier",
-            "example": "123abc"
+            "example": "123"
+          }
+        ],
+        "security": [
+          {
+            "BearerAuth": []
           }
         ],
         "responses": {
@@ -1160,15 +1169,10 @@
       },
       "patch": {
         "operationId": "patch-products-{id}",
-        "summary": "Update product",
+        "summary": "Update product\r",
         "description": "Updates an existing product",
         "tags": [
           "Products"
-        ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
         ],
         "parameters": [
           {
@@ -1180,7 +1184,12 @@
             },
             "required": true,
             "description": "Unique product identifier",
-            "example": "123abc"
+            "example": "123"
+          }
+        ],
+        "security": [
+          {
+            "BearerAuth": []
           }
         ],
         "requestBody": {
@@ -1348,15 +1357,10 @@
       },
       "delete": {
         "operationId": "delete-products-{id}",
-        "summary": "Delete product",
+        "summary": "Delete product\r",
         "description": "Removes a product from the system",
         "tags": [
           "Products"
-        ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
         ],
         "parameters": [
           {
@@ -1368,16 +1372,30 @@
             },
             "required": true,
             "description": "Unique product identifier",
-            "example": "123abc"
+            "example": "123"
           }
         ],
-        "responses": {}
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
       }
     },
     "/users/{id}": {
       "get": {
         "operationId": "get-users-{id}",
-        "summary": "Get user by ID",
+        "summary": "Get user by ID\r",
         "description": "Retrieves detailed user information",
         "tags": [
           "Users"
@@ -1401,7 +1419,7 @@
             },
             "required": true,
             "description": "User ID",
-            "example": "123abc"
+            "example": "123"
           }
         ],
         "responses": {
@@ -1417,15 +1435,10 @@
       },
       "patch": {
         "operationId": "patch-users-{id}",
-        "summary": "Update user",
+        "summary": "Update user\r",
         "description": "Updates user information",
         "tags": [
           "Users"
-        ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
         ],
         "parameters": [
           {
@@ -1437,7 +1450,12 @@
             },
             "required": true,
             "description": "User ID",
-            "example": "123abc"
+            "example": "123"
+          }
+        ],
+        "security": [
+          {
+            "BearerAuth": []
           }
         ],
         "requestBody": {
@@ -1460,15 +1478,10 @@
       },
       "delete": {
         "operationId": "delete-users-{id}",
-        "summary": "Delete user",
+        "summary": "Delete user\r",
         "description": "Deletes a user account",
         "tags": [
           "Users"
-        ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
         ],
         "parameters": [
           {
@@ -1480,10 +1493,24 @@
             },
             "required": true,
             "description": "User ID",
-            "example": "123abc"
+            "example": "123"
           }
         ],
-        "responses": {}
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
       }
     }
   }
