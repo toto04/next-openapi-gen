@@ -27,7 +27,7 @@ export class RouteProcessor {
 
   constructor(config: OpenApiConfig) {
     this.config = config;
-    this.schemaProcessor = new SchemaProcessor(config.schemaDir);
+    this.schemaProcessor = new SchemaProcessor(config.schemaDir, config.schemaType);
   }
 
   /**
