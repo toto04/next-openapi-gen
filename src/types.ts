@@ -128,10 +128,10 @@ export type OpenAPIDefinition = {
 };
 
 export type DataTypes = {
-  pathParams?: string;
-  params?: string;
-  body?: string;
-  response?: string;
+  pathParamsType?: string;
+  paramsType?: string;
+  bodyType?: string;
+  responseType?: string;
   summary?: string;
   description?: string;
   auth?: string;

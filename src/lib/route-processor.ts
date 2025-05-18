@@ -71,7 +71,7 @@ export class RouteProcessor {
               const pathParams = extractPathParameters(routePath);
 
               // If we have path parameters but no pathParamsType defined, we should log a warning
-              if (pathParams.length > 0 && !dataTypes.pathParams) {
+              if (pathParams.length > 0 && !dataTypes.pathParamsType) {
                 console.warn(
                   `Route ${routePath} contains path parameters ${pathParams.join(
                     ", "
@@ -97,7 +97,7 @@ export class RouteProcessor {
                   const routePath = this.getRoutePath(filePath);
                   const pathParams = extractPathParameters(routePath);
 
-                  if (pathParams.length > 0 && !dataTypes.pathParams) {
+                  if (pathParams.length > 0 && !dataTypes.pathParamsType) {
                     console.warn(
                       `Route ${routePath} contains path parameters ${pathParams.join(
                         ", "
