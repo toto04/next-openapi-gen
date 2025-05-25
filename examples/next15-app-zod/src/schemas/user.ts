@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { PaymentMethodSchema } from "./payment";
-import { PaginatedResponse } from "./base";
+import { PaginatedResponse, PaginationSchema } from "./base";
+
+export const UserListParamsSchema = z.object({
+  pagination: PaginationSchema,
+  filter: z.object({ name: z.string() }).optional(),
+});
 
 // Path parameters schema
 export const UserIdParams = z.object({

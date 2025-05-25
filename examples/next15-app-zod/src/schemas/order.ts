@@ -2,6 +2,11 @@ import { z } from "zod";
 import { AddressSchema } from "./user";
 import { PaymentMethodSchema } from "./payment";
 import { PaginatedResponse } from "./base";
+import { CartItemSchema } from "./cart";
+
+export const OrderIdParams = z.object({
+  id: z.string().uuid().describe("Order ID"),
+});
 
 // Order status
 export const OrderStatusSchema = z
@@ -16,6 +21,15 @@ export const OrderStatusSchema = z
     "refunded",
   ])
   .describe("Order status");
+
+// Update order status request body
+export const UpdateOrderStatusBody = z.object({
+  status: OrderStatusSchema.describe("New order status"),
+  notes: z
+    .string()
+    .optional()
+    .describe("Additional notes about the status change"),
+});
 
 // Order
 export const OrderSchema = z.object({
