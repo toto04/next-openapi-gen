@@ -40,6 +40,14 @@ export class SchemaProcessor {
    * Get all defined schemas (for components.schemas section)
    */
   public getDefinedSchemas(): Record<string, OpenAPIDefinition> {
+    // If using Zod, also include all processed Zod schemas
+    if (this.schemaType === "zod" && this.zodSchemaConverter) {
+      const zodSchemas = this.zodSchemaConverter.getProcessedSchemas();
+      return {
+        ...this.openapiDefinitions,
+        ...zodSchemas,
+      };
+    }
     return this.openapiDefinitions;
   }
 
@@ -559,9 +567,7 @@ export class SchemaProcessor {
       options.description = description;
     }
 
-    if (this.contentType === "params") {
-      options.required = !isOptional;
-    } else if (this.contentType === "body") {
+    if (this.contentType === "body") {
       options.nullable = isOptional;
     }
 
@@ -655,7 +661,7 @@ export class SchemaProcessor {
           schema: {
             type: value.type,
           },
-          required: isPathParam ? true : value.required, // Path parameters are always required
+          required: isPathParam ? true : !!value.required, // Path parameters are always required
         };
 
         if (value.enum) {
@@ -738,6 +744,20 @@ export class SchemaProcessor {
     if (responseType && !responses) {
       this.findSchemaDefinition(responseType, "response");
       responses = this.openapiDefinitions[responseType] || {};
+    }
+
+    if (this.schemaType === "zod") {
+      const schemasToProcess = [
+        paramsType,
+        pathParamsType,
+        bodyType,
+        responseType,
+      ].filter(Boolean);
+      schemasToProcess.forEach((schemaName) => {
+        if (!this.openapiDefinitions[schemaName]) {
+          this.findSchemaDefinition(schemaName, "");
+        }
+      });
     }
 
     return {
