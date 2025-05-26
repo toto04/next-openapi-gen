@@ -24,6 +24,7 @@ export function extractPathParameters(routePath: string): string[] {
 
 export function extractJSDocComments(path: NodePath): DataTypes {
   const comments = path.node.leadingComments;
+  let tag = "";
   let summary = "";
   let description = "";
   let paramsType = "";
@@ -65,6 +66,14 @@ export function extractJSDocComments(path: NodePath): DataTypes {
         description = commentValue.match(regex)[1].trim();
       }
 
+      if (commentValue.includes("@tag")) {
+        const regex = /@tag\s*(.*)/;
+        const match = commentValue.match(regex);
+        if (match && match[1]) {
+          tag = match[1].trim();
+        }
+      }
+
       if (commentValue.includes("@params")) {
         paramsType = extractTypeFromComment(commentValue, "@params");
       }
@@ -84,6 +93,7 @@ export function extractJSDocComments(path: NodePath): DataTypes {
   }
 
   return {
+    tag,
     auth,
     summary,
     description,

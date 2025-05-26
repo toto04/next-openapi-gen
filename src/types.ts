@@ -128,6 +128,7 @@ export type OpenAPIDefinition = {
 };
 
 export type DataTypes = {
+  tag?: string;
   pathParamsType?: string;
   paramsType?: string;
   bodyType?: string;

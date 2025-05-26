@@ -27,7 +27,10 @@ export class RouteProcessor {
 
   constructor(config: OpenApiConfig) {
     this.config = config;
-    this.schemaProcessor = new SchemaProcessor(config.schemaDir, config.schemaType);
+    this.schemaProcessor = new SchemaProcessor(
+      config.schemaDir,
+      config.schemaType
+    );
   }
 
   /**
@@ -152,7 +155,7 @@ export class RouteProcessor {
     const routePath = this.getRoutePath(filePath);
     const rootPath = capitalize(routePath.split("/")[1]);
     const operationId = getOperationId(routePath, method);
-    const { summary, description, auth, isOpenApi } = dataTypes;
+    const { tag, summary, description, auth, isOpenApi } = dataTypes;
 
     if (this.config.includeOpenApiRoutes && !isOpenApi) {
       // If flag is enabled and there is no @openapi tag, then skip path
@@ -170,7 +173,7 @@ export class RouteProcessor {
       operationId: operationId,
       summary: summary,
       description: description,
-      tags: [rootPath],
+      tags: [tag || rootPath],
       parameters: [],
     };
 

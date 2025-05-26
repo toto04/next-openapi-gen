@@ -57,8 +57,8 @@ During initialization (`npx next-openapi-gen init`), a configuration file `next.
     }
   ],
   "apiDir": "src/app/api",
-  "schemaDir": "src/types",
-  "schemaType": "typescript",  // or "zod" for Zod schemas
+  "schemaDir": "src/types", // or e.g. "src/schemas" for Zod schemas
+  "schemaType": "typescript", // or "zod" for Zod schemas
   "outputFile": "openapi.json",
   "docsUrl": "/api-docs",
   "includeOpenApiRoutes": false
@@ -67,13 +67,13 @@ During initialization (`npx next-openapi-gen init`), a configuration file `next.
 
 ### Configuration Options
 
-| Option | Description |
-|-------|------|
-| `apiDir` | Path to the API directory |
-| `schemaDir` | Path to the types/schemas directory |
-| `schemaType` | Schema type: `"typescript"` or `"zod"` |
-| `outputFile` | Path to the OpenAPI output file |
-| `docsUrl` | API documentation URL (for Swagger UI) |
+| Option                 | Description                                      |
+| ---------------------- | ------------------------------------------------ |
+| `apiDir`               | Path to the API directory                        |
+| `schemaDir`            | Path to the types/schemas directory              |
+| `schemaType`           | Schema type: `"typescript"` or `"zod"`           |
+| `outputFile`           | Path to the OpenAPI output file                  |
+| `docsUrl`              | API documentation URL (for Swagger UI)           |
 | `includeOpenApiRoutes` | Whether to include only routes with @openapi tag |
 
 ## Documenting Your API
@@ -83,7 +83,7 @@ During initialization (`npx next-openapi-gen init`), a configuration file `next.
 ```typescript
 // src/app/api/users/[id]/route.ts
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
 type UserParams = {
   id: string; // User ID
@@ -115,17 +115,17 @@ export async function GET(
 ```typescript
 // src/app/api/products/[id]/route.ts
 
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 export const ProductParams = z.object({
-  id: z.string().describe("Product ID")
+  id: z.string().describe("Product ID"),
 });
 
 export const ProductResponse = z.object({
   id: z.string().describe("Product ID"),
   name: z.string().describe("Product name"),
-  price: z.number().positive().describe("Product price")
+  price: z.number().positive().describe("Product price"),
 });
 
 /**
@@ -145,15 +145,16 @@ export async function GET(
 
 ## JSDoc Documentation Tags
 
-| Tag | Description |
-|-----|------|
-| `@desc` | Endpoint description |
-| `@pathParams` | Path parameters type/schema |
-| `@params` | Query parameters type/schema |
-| `@body` | Request body type/schema |
-| `@response` | Response type/schema |
-| `@auth` | Authorization type (`bearer`, `basic`, `apikey`) |
-| `@openapi` | Marks the route for inclusion in documentation (if includeOpenApiRoutes is enabled) |
+| Tag           | Description                                                                         |
+| ------------- | ----------------------------------------------------------------------------------- |
+| `@desc`       | Endpoint description                                                                |
+| `@pathParams` | Path parameters type/schema                                                         |
+| `@params`     | Query parameters type/schema                                                        |
+| `@body`       | Request body type/schema                                                            |
+| `@response`   | Response type/schema                                                                |
+| `@auth`       | Authorization type (`bearer`, `basic`, `apikey`)                                    |
+| `@tag`        | Custom tag                                                                          |
+| `@openapi`    | Marks the route for inclusion in documentation (if includeOpenApiRoutes is enabled) |
 
 ## CLI Usage
 
@@ -164,6 +165,7 @@ npx next-openapi-gen init
 ```
 
 This command will generate following elements:
+
 - Generate `next.openapi.json` configuration file
 - Install UI interface (default `Scalar`)
 - Add `/api-docs` page to display OpenAPI documentation
@@ -175,6 +177,7 @@ npx next-openapi-gen generate
 ```
 
 This command will generate OpenAPI documentation based on your API code:
+
 - Scan API directories for routes
 - Analyze types/schemas
 - Generate OpenAPI file (`openapi.json`) in `public` folder
@@ -182,7 +185,7 @@ This command will generate OpenAPI documentation based on your API code:
 
 ### 3. View API Documentation
 
-To see API documenation go to `http://localhost:3000/api-docs` 
+To see API documenation go to `http://localhost:3000/api-docs`
 
 ## Examples
 
@@ -198,7 +201,7 @@ type UserParams = {
 
 // Or Zod
 const UserParams = z.object({
-  id: z.string().describe("User ID")
+  id: z.string().describe("User ID"),
 });
 
 /**
@@ -225,7 +228,7 @@ type UsersQueryParams = {
 const UsersQueryParams = z.object({
   page: z.number().optional().describe("Page number"),
   limit: z.number().optional().describe("Results per page"),
-  search: z.string().optional().describe("Search phrase")
+  search: z.string().optional().describe("Search phrase"),
 });
 
 /**
@@ -252,7 +255,7 @@ type CreateUserBody = {
 const CreateUserBody = z.object({
   name: z.string().describe("Full name"),
   email: z.string().email().describe("Email address"),
-  password: z.string().min(8).describe("Password")
+  password: z.string().min(8).describe("Password"),
 });
 
 /**
@@ -281,7 +284,7 @@ const UserResponse = z.object({
   id: z.string().describe("User ID"),
   name: z.string().describe("Full name"),
   email: z.string().email().describe("Email address"),
-  createdAt: z.date().describe("Creation date")
+  createdAt: z.date().describe("Creation date"),
 });
 
 /**
@@ -326,14 +329,14 @@ If no type/schema is provided for path parameters, a default schema will be gene
 
 The library generates intelligent examples for parameters based on their name:
 
-| Parameter name | Example |
-|----------------|----------|
-| `id`, `*Id` | `"123"` or `123` |
-| `slug` | `"example-slug"` |
-| `uuid` | `"123e4567-e89b-12d3-a456-426614174000"` |
-| `email` | `"user@example.com"` |
-| `name` | `"example-name"` |
-| `date` | `"2023-01-01"` |
+| Parameter name | Example                                  |
+| -------------- | ---------------------------------------- |
+| `id`, `*Id`    | `"123"` or `123`                         |
+| `slug`         | `"example-slug"`                         |
+| `uuid`         | `"123e4567-e89b-12d3-a456-426614174000"` |
+| `email`        | `"user@example.com"`                     |
+| `name`         | `"example-name"`                         |
+| `date`         | `"2023-01-01"`                           |
 
 ## Advanced Zod Features
 
@@ -343,7 +346,12 @@ The library supports advanced Zod features such as:
 
 ```typescript
 // Zod validation chains are properly converted to OpenAPI schemas
-const EmailSchema = z.string().email().min(5).max(100).describe("Email address");
+const EmailSchema = z
+  .string()
+  .email()
+  .min(5)
+  .max(100)
+  .describe("Email address");
 
 // Converts to OpenAPI with email format, minLength and maxLength
 ```
@@ -352,11 +360,11 @@ const EmailSchema = z.string().email().min(5).max(100).describe("Email address")
 
 ```typescript
 // You can use TypeScript with Zod types
-import { z } from 'zod';
+import { z } from "zod";
 
 const UserSchema = z.object({
   id: z.string().uuid(),
-  name: z.string().min(2)
+  name: z.string().min(2),
 });
 
 // Use z.infer to create a TypeScript type

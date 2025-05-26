@@ -709,11 +709,13 @@ export class SchemaProcessor {
   }
 
   public getSchemaContent({
+    tag,
     paramsType,
     pathParamsType,
     bodyType,
     responseType,
   }: any): {
+    tag: OpenAPIDefinition;
     params: OpenAPIDefinition;
     pathParams: OpenAPIDefinition;
     body: OpenAPIDefinition;
@@ -761,6 +763,7 @@ export class SchemaProcessor {
     }
 
     return {
+      tag,
       params,
       pathParams,
       body,
