@@ -168,6 +168,14 @@ export class ZodSchemaConverter {
         return;
       }
 
+      // Pre-process all schemas in file
+      this.preprocessAllSchemasInFile(filePath);
+
+      // Return it, if the schema has already been processed during pre-processing
+      if (this.zodSchemas[schemaName]) {
+        return;
+      }
+
       // Parse the file
       const ast = parse(content, {
         sourceType: "module",
@@ -739,6 +747,52 @@ export class ZodSchemaConverter {
         } else {
           console.log(`Skipping property ${index} - unsupported key type`);
           return; // Skip if key is not identifier or string literal
+        }
+
+        if (
+          t.isCallExpression(prop.value) &&
+          t.isMemberExpression(prop.value.callee) &&
+          t.isIdentifier(prop.value.callee.object)
+        ) {
+          const schemaName = prop.value.callee.object.name;
+          // @ts-ignore
+          const methodName = prop.value.callee.property.name;
+
+          // Process base schema first
+          if (!this.zodSchemas[schemaName]) {
+            this.convertZodSchemaToOpenApi(schemaName);
+          }
+
+          // For describe method, use reference with description
+          if (methodName === "describe" && this.zodSchemas[schemaName]) {
+            if (
+              prop.value.arguments.length > 0 &&
+              t.isStringLiteral(prop.value.arguments[0])
+            ) {
+              properties[propName] = {
+                allOf: [{ $ref: `#/components/schemas/${schemaName}` }],
+                description: prop.value.arguments[0].value,
+              };
+            } else {
+              properties[propName] = {
+                $ref: `#/components/schemas/${schemaName}`,
+              };
+            }
+            required.push(propName);
+            return;
+          }
+
+          // For other methods, process normally
+          const processedSchema = this.processZodNode(prop.value);
+          if (processedSchema) {
+            properties[propName] = processedSchema;
+            const isOptional =
+              this.isOptional(prop.value) || this.hasOptionalMethod(prop.value);
+            if (!isOptional) {
+              required.push(propName);
+            }
+          }
+          return;
         }
 
         // Check if the property value is an identifier (reference to another schema)
@@ -1405,5 +1459,69 @@ export class ZodSchemaConverter {
         error
       );
     }
+  }
+
+  /**
+   * Pre-process all Zod schemas in a file
+   */
+  preprocessAllSchemasInFile(filePath) {
+    try {
+      const content = fs.readFileSync(filePath, "utf-8");
+      const ast = parse(content, {
+        sourceType: "module",
+        plugins: ["typescript", "decorators-legacy"],
+      });
+
+      // Collect all exported Zod schemas
+      traverse.default(ast, {
+        ExportNamedDeclaration: (path) => {
+          if (t.isVariableDeclaration(path.node.declaration)) {
+            path.node.declaration.declarations.forEach((declaration) => {
+              if (t.isIdentifier(declaration.id) && declaration.init) {
+                const schemaName = declaration.id.name;
+
+                // Check if is Zos schema
+                if (
+                  this.isZodSchema(declaration.init) &&
+                  !this.zodSchemas[schemaName]
+                ) {
+                  console.log(`Pre-processing Zod schema: ${schemaName}`);
+                  this.processingSchemas.add(schemaName);
+                  const schema = this.processZodNode(declaration.init);
+                  if (schema) {
+                    this.zodSchemas[schemaName] = schema;
+                  }
+                  this.processingSchemas.delete(schemaName);
+                }
+              }
+            });
+          }
+        },
+      });
+    } catch (error) {
+      console.error(`Error pre-processing file ${filePath}:`, error);
+    }
+  }
+
+  /**
+   * Check if node is Zod schema
+   */
+  isZodSchema(node) {
+    if (t.isCallExpression(node)) {
+      if (
+        t.isMemberExpression(node.callee) &&
+        t.isIdentifier(node.callee.object) &&
+        node.callee.object.name === "z"
+      ) {
+        return true;
+      }
+      if (
+        t.isMemberExpression(node.callee) &&
+        t.isCallExpression(node.callee.object)
+      ) {
+        return this.isZodSchema(node.callee.object);
+      }
+    }
+    return false;
   }
 }
