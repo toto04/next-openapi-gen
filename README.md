@@ -336,6 +336,7 @@ const UserSchema = z.object({
 });
 
 /**
+ * @body UserSchema
  * @response UserResponse
  */
 export async function GET() {
