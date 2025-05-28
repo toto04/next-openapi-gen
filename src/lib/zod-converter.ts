@@ -296,6 +296,181 @@ export class ZodSchemaConverter {
             path.node.id.name === schemaName &&
             path.node.init
           ) {
+             // Helper function for processing the call chain
+            const processChainedCall = (node, baseSchema) => {
+              if (
+                !t.isCallExpression(node) ||
+                !t.isMemberExpression(node.callee)
+              ) {
+                return baseSchema;
+              }
+
+              // @ts-ignore
+              const methodName = node.callee.property.name;
+              let schema = baseSchema;
+
+              // If there is an even deeper call, process it first
+              if (t.isCallExpression(node.callee.object)) {
+                schema = processChainedCall(node.callee.object, baseSchema);
+              }
+
+              // Now apply the current method
+              switch (methodName) {
+                case "omit":
+                  if (
+                    node.arguments.length > 0 &&
+                    t.isObjectExpression(node.arguments[0])
+                  ) {
+                    node.arguments[0].properties.forEach((prop) => {
+                      if (
+                        t.isObjectProperty(prop) &&
+                        t.isBooleanLiteral(prop.value) &&
+                        prop.value.value === true
+                      ) {
+                        const key = t.isIdentifier(prop.key)
+                          ? prop.key.name
+                          : t.isStringLiteral(prop.key)
+                          ? prop.key.value
+                          : null;
+
+                        if (key && schema.properties) {
+                          console.log(`Removing property: ${key}`);
+                          delete schema.properties[key];
+                          if (schema.required) {
+                            schema.required = schema.required.filter(
+                              (r) => r !== key
+                            );
+                          }
+                        }
+                      }
+                    });
+                  }
+                  break;
+
+                case "partial":
+                  // All fields become optional
+                  if (schema.properties) {
+                    Object.keys(schema.properties).forEach((key) => {
+                      schema.properties[key].nullable = true;
+                    });
+                    // Remove all required
+                    delete schema.required;
+                  }
+                  break;
+
+                case "pick":
+                  if (
+                    node.arguments.length > 0 &&
+                    t.isObjectExpression(node.arguments[0])
+                  ) {
+                    const keysToPick = [];
+                    node.arguments[0].properties.forEach((prop) => {
+                      if (
+                        t.isObjectProperty(prop) &&
+                        t.isBooleanLiteral(prop.value) &&
+                        prop.value.value === true
+                      ) {
+                        const key = t.isIdentifier(prop.key)
+                          ? prop.key.name
+                          : t.isStringLiteral(prop.key)
+                          ? prop.key.value
+                          : null;
+                        if (key) keysToPick.push(key);
+                      }
+                    });
+
+                    // Keep only selected properties
+                    if (schema.properties) {
+                      const newProperties = {};
+                      keysToPick.forEach((key) => {
+                        if (schema.properties[key]) {
+                          newProperties[key] = schema.properties[key];
+                        }
+                      });
+                      schema.properties = newProperties;
+
+                      // Update required
+                      if (schema.required) {
+                        schema.required = schema.required.filter((key) =>
+                          keysToPick.includes(key)
+                        );
+                      }
+                    }
+                  }
+                  break;
+
+                case "required":
+                  // All fields become required
+                  if (schema.properties) {
+                    const requiredFields = Object.keys(schema.properties);
+                    schema.required = requiredFields;
+                    // Remove nullable from fields
+                    Object.keys(schema.properties).forEach((key) => {
+                      delete schema.properties[key].nullable;
+                    });
+                  }
+                  break;
+              }
+
+              return schema;
+            };
+
+            // Find the underlying schema (the most nested object in the chain)
+            const findBaseSchema = (node) => {
+              if (t.isIdentifier(node)) {
+                return node.name;
+              } else if (t.isMemberExpression(node)) {
+                return findBaseSchema(node.object);
+              } else if (
+                t.isCallExpression(node) &&
+                t.isMemberExpression(node.callee)
+              ) {
+                return findBaseSchema(node.callee.object);
+              }
+              return null;
+            };
+
+            // Check method calls on other schemas
+            if (t.isCallExpression(path.node.init)) {
+              const baseSchemaName = findBaseSchema(path.node.init);
+
+              if (baseSchemaName && baseSchemaName !== "z") {
+                console.log(
+                  `Found chained call starting from: ${baseSchemaName}`
+                );
+
+                // First make sure the underlying schema is processed
+                if (!this.zodSchemas[baseSchemaName]) {
+                  console.log(
+                    `Base schema ${baseSchemaName} not found, processing it first`
+                  );
+                  this.processFileForZodSchema(filePath, baseSchemaName);
+                }
+
+                if (this.zodSchemas[baseSchemaName]) {
+                  console.log(`Base schema found, applying transformations`);
+
+                  // Copy base schema
+                  const baseSchema = JSON.parse(
+                    JSON.stringify(this.zodSchemas[baseSchemaName])
+                  );
+
+                  // Process the entire call chain
+                  const finalSchema = processChainedCall(
+                    path.node.init,
+                    baseSchema
+                  );
+
+                  this.zodSchemas[schemaName] = finalSchema;
+                  console.log(
+                    `Created ${schemaName} with properties:`,
+                    Object.keys(finalSchema.properties || {})
+                  );
+                  return;
+                }
+              }
+            }
+
             // Check if it is .extend()
             if (
               t.isCallExpression(path.node.init) &&
