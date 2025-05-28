@@ -1064,7 +1064,15 @@ export class ZodSchemaConverter {
         break;
       case "describe":
         if (node.arguments.length > 0 && t.isStringLiteral(node.arguments[0])) {
-          schema.description = node.arguments[0].value;
+          const description = node.arguments[0].value;
+          // Check if description includes @deprecated
+          if (description.startsWith("@deprecated")) {
+            schema.deprecated = true;
+            // Remove @deprecated from description
+            schema.description = description.replace("@deprecated", "").trim();
+          } else {
+            schema.description = description;
+          }
         }
         break;
       case "deprecated":

@@ -331,7 +331,7 @@ type UserResponse = {
 const UserSchema = z.object({
   id: z.string(),
   name: z.string(),
-  fullName: z.string().optional().deprecated(),
+  fullName: z.string().optional().describe("@deprecated Use name instead"),
   email: z.string().email(),
 });
 
