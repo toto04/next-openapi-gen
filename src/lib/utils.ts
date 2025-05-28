@@ -84,8 +84,8 @@ export function extractJSDocComments(path: NodePath): DataTypes {
         }
       }
 
-      if (commentValue.includes("@desc")) {
-        const regex = /@desc\s*(.*)/;
+      if (commentValue.includes("@description")) {
+        const regex = /@description\s*(.*)/;
         description = commentValue.match(regex)[1].trim();
       }
 

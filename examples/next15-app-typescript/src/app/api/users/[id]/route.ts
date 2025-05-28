@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 /**
  * Get User by ID
- * @desc Retrieves a user's profile information
+ * @description Retrieves a user's profile information
  * @pathParams UserIdParam
  * @response UserResponse
  * @openapi

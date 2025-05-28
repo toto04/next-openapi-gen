@@ -11,7 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 /**
  * Get Task Comments
- * @desc Retrieve comments for a specific task within a project and organization
+ * @description Retrieve comments for a specific task within a project and organization
  * @pathParams CommentPathParams
  * @params CommentsQueryParams
  * @response CommentsResponse
@@ -108,7 +108,7 @@ export async function GET(
 
 /**
  * Create Task Comment
- * @desc Add a new comment to a specific task
+ * @description Add a new comment to a specific task
  * @pathParams CommentPathParams
  * @body CreateCommentBody
  * @response CreateCommentResponse
@@ -172,7 +172,7 @@ export async function POST(
 
 /**
  * Update Task Comment
- * @desc Modify an existing comment on a task
+ * @description Modify an existing comment on a task
  * @pathParams CommentPathParams
  * @body UpdateCommentBody
  * @response UpdateCommentResponse
@@ -254,7 +254,7 @@ export async function PATCH(
 
 /**
  * Delete Task Comment
- * @desc Remove a comment from a task (soft delete)
+ * @description Remove a comment from a task (soft delete)
  * @pathParams CommentPathParams
  * @response { success: boolean, message?: string }
  * @auth bearer

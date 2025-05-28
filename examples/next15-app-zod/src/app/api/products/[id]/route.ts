@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 /**
  * Get product
- * @desc Retrieves detailed product information by ID
+ * @description Retrieves detailed product information by ID
  * @pathParams ProductIdParams
  * @params ProductQueryParams
  * @response ProductResponseSchema
@@ -20,7 +20,7 @@ export async function GET(
 
 /**
  * Update product
- * @desc Updates an existing product
+ * @description Updates an existing product
  * @pathParams ProductIdParams
  * @body UpdateProductSchema
  * @response ProductResponseSchema
@@ -38,7 +38,7 @@ export async function PATCH(
 
 /**
  * Delete product
- * @desc Removes a product from the system
+ * @description Removes a product from the system
  * @pathParams ProductIdParams
  * @auth bearer
  * @openapi

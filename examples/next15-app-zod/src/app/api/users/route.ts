@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 /**
  * Get users
- * @desc Retrieve users
+ * @description Retrieve users
  * @params UserListParamsSchema
  * @response UserDetailedSchema
  * @openapi

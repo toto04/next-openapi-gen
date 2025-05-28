@@ -10,7 +10,7 @@ type LoginResponse = {
 
 /**
  * Authenticate as a user.
- * @desc Login a user
+ * @description Login a user
  * @body LoginBody
  * @response LoginResponse
  */

@@ -97,7 +97,7 @@ type UserResponse = {
 
 /**
  * Get user information
- * @desc Fetches detailed user information by ID
+ * @description Fetches detailed user information by ID
  * @pathParams UserParams
  * @response UserResponse
  * @openapi
@@ -130,7 +130,7 @@ export const ProductResponse = z.object({
 
 /**
  * Get product information
- * @desc Fetches detailed product information by ID
+ * @description Fetches detailed product information by ID
  * @pathParams ProductParams
  * @response ProductResponse
  * @openapi
@@ -147,7 +147,7 @@ export async function GET(
 
 | Tag                    | Description                                                                         |
 | ---------------------- | ----------------------------------------------------------------------------------- |
-| `@desc`                | Endpoint description                                                                |
+| `@description`         | Endpoint description                                                                |
 | `@pathParams`          | Path parameters type/schema                                                         |
 | `@params`              | Query parameters type/schema                                                        |
 | `@body`                | Request body type/schema                                                            |

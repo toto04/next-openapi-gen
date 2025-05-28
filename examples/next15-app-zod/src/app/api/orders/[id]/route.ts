@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 /**
  * Get order by ID
- * @desc Retrieves detailed order information
+ * @description Retrieves detailed order information
  * @pathParams OrderIdParams
  * @response OrderSchema
  * @auth bearer
@@ -21,7 +21,7 @@ export async function GET(
 
 /**
  * Update order status
- * @desc Updates the status of an order
+ * @description Updates the status of an order
  * @pathParams OrderIdParams
  * @body UpdateOrderStatusBody
  * @response OrderSchema
@@ -39,7 +39,7 @@ export async function PATCH(
 
 /**
  * Cancel order
- * @desc Cancels an order if it's not already delivered
+ * @description Cancels an order if it's not already delivered
  * @pathParams OrderIdParams
  * @auth bearer
  * @openapi

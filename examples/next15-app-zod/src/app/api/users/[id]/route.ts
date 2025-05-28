@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 /**
  * Get user by ID
- * @desc Retrieves detailed user information
+ * @description Retrieves detailed user information
  * @pathParams UserIdParams
  * @params UserFieldsQuery
  * @response UserDetailedSchema
@@ -18,7 +18,7 @@ export async function GET(
 
 /**
  * Update user
- * @desc Updates user information
+ * @description Updates user information
  * @pathParams UserIdParams
  * @body UpdateUserBody
  * @response UserDetailedSchema
@@ -36,7 +36,7 @@ export async function PATCH(
 
 /**
  * Delete user
- * @desc Deletes a user account
+ * @description Deletes a user account
  * @pathParams UserIdParams
  * @auth bearer
  * @openapi

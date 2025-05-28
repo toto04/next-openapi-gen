@@ -28,7 +28,7 @@ type UserResponse = {
 
 /**
  * Get User by ID
- * @desc Retrieves a user's profile information
+ * @description Retrieves a user's profile information
  * @pathParams UserIdParam
  * @response UserResponse
  * @openapi
