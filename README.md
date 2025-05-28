@@ -57,7 +57,7 @@ During initialization (`npx next-openapi-gen init`), a configuration file `next.
     }
   ],
   "apiDir": "src/app/api",
-  "schemaDir": "src/types", // or e.g. "src/schemas" for Zod schemas
+  "schemaDir": "src/types", // or "src/schemas" for Zod schemas
   "schemaType": "typescript", // or "zod" for Zod schemas
   "outputFile": "openapi.json",
   "docsUrl": "/api-docs",
@@ -145,16 +145,19 @@ export async function GET(
 
 ## JSDoc Documentation Tags
 
-| Tag           | Description                                                                         |
-| ------------- | ----------------------------------------------------------------------------------- |
-| `@desc`       | Endpoint description                                                                |
-| `@pathParams` | Path parameters type/schema                                                         |
-| `@params`     | Query parameters type/schema                                                        |
-| `@body`       | Request body type/schema                                                            |
-| `@response`   | Response type/schema                                                                |
-| `@auth`       | Authorization type (`bearer`, `basic`, `apikey`)                                    |
-| `@tag`        | Custom tag                                                                          |
-| `@openapi`    | Marks the route for inclusion in documentation (if includeOpenApiRoutes is enabled) |
+| Tag                    | Description                                                                         |
+| ---------------------- | ----------------------------------------------------------------------------------- |
+| `@desc`                | Endpoint description                                                                |
+| `@pathParams`          | Path parameters type/schema                                                         |
+| `@params`              | Query parameters type/schema                                                        |
+| `@body`                | Request body type/schema                                                            |
+| `@bodyDescription`     | Request body description                                                            |
+| `@response`            | Response type/schema                                                                |
+| `@responseDescription` | Response description                                                                |
+| `@auth`                | Authorization type (`bearer`, `basic`, `apikey`)                                    |
+| `@tag`                 | Custom tag                                                                          |
+| `@deprecated`          | Marks the route as deprecated                                                       |
+| `@openapi`             | Marks the route for inclusion in documentation (if includeOpenApiRoutes is enabled) |
 
 ## CLI Usage
 
@@ -260,6 +263,7 @@ const CreateUserBody = z.object({
 
 /**
  * @body CreateUserBody
+ * @bodyDescription User registration data including email and password
  */
 export async function POST() {
   // ...
@@ -289,6 +293,7 @@ const UserResponse = z.object({
 
 /**
  * @response UserResponse
+ * @responseDescription Returns newly created user object
  */
 export async function GET() {
   // ...
@@ -302,6 +307,36 @@ export async function GET() {
 
 /**
  * @auth bearer
+ */
+export async function GET() {
+  // ...
+}
+```
+
+### Deprecated
+
+```typescript
+// src/app/api/v1/route.ts
+
+// TypeScript
+type UserResponse = {
+  id: string;
+  name: string;
+  /** @deprecated Use firstName and lastName instead */
+  fullName?: string;
+  email: string;
+};
+
+// Or Zod
+const UserSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  fullName: z.string().optional().deprecated(),
+  email: z.string().email(),
+});
+
+/**
+ * @response UserResponse
  */
 export async function GET() {
   // ...
@@ -370,7 +405,7 @@ const UserSchema = z.object({
 // Use z.infer to create a TypeScript type
 type User = z.infer<typeof UserSchema>;
 
-// The library will be able to recognize this schema by reference
+// The library will be able to recognize this schema by reference `UserSchema` or `User` type.
 ```
 
 ## Available UI providers
