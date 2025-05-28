@@ -296,7 +296,16 @@ export class ZodSchemaConverter {
             path.node.id.name === schemaName &&
             path.node.init
           ) {
-             // Helper function for processing the call chain
+            // Check if this is any Zod schema (including chained calls)
+            if (this.isZodSchema(path.node.init)) {
+              const schema = this.processZodNode(path.node.init);
+              if (schema) {
+                this.zodSchemas[schemaName] = schema;
+              }
+              return;
+            }
+
+            // Helper function for processing the call chain
             const processChainedCall = (node, baseSchema) => {
               if (
                 !t.isCallExpression(node) ||
@@ -1683,6 +1692,27 @@ export class ZodSchemaConverter {
             });
           }
         },
+        // Also process non-exported const declarations
+        VariableDeclaration: (path) => {
+          path.node.declarations.forEach((declaration) => {
+            if (t.isIdentifier(declaration.id) && declaration.init) {
+              const schemaName = declaration.id.name;
+              if (
+                this.isZodSchema(declaration.init) &&
+                !this.zodSchemas[schemaName] &&
+                !this.processingSchemas.has(schemaName)
+              ) {
+                console.log(`Pre-processing Zod schema: ${schemaName}`);
+                this.processingSchemas.add(schemaName);
+                const schema = this.processZodNode(declaration.init);
+                if (schema) {
+                  this.zodSchemas[schemaName] = schema;
+                }
+                this.processingSchemas.delete(schemaName);
+              }
+            }
+          });
+        },
       });
     } catch (error) {
       console.error(`Error pre-processing file ${filePath}:`, error);
@@ -1694,6 +1724,7 @@ export class ZodSchemaConverter {
    */
   isZodSchema(node) {
     if (t.isCallExpression(node)) {
+      // Check direct z.method() calls
       if (
         t.isMemberExpression(node.callee) &&
         t.isIdentifier(node.callee.object) &&
@@ -1701,6 +1732,8 @@ export class ZodSchemaConverter {
       ) {
         return true;
       }
+
+      // Check chained calls like z.string().regex()
       if (
         t.isMemberExpression(node.callee) &&
         t.isCallExpression(node.callee.object)
