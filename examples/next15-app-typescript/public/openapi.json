@@ -1058,6 +1058,56 @@
           }
         }
       },
+      "UploadFormData": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "description": "Image file (PNG/JPG, max 5MB)",
+            "nullable": false
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "nullable": false
+          }
+        }
+      },
+      "File": {},
+      "UploadResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "size": {
+            "type": "number"
+          },
+          "type": {
+            "type": "string",
+            "description": "MIME type"
+          },
+          "url": {
+            "type": "string",
+            "description": "File access URL"
+          },
+          "category": {
+            "type": "string",
+            "description": "File category"
+          },
+          "description": {
+            "type": "string"
+          },
+          "uploadedAt": {
+            "type": "string"
+          }
+        }
+      },
       "UserIdParam": {
         "type": "object",
         "properties": {
@@ -2093,6 +2143,82 @@
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/upload": {
+      "post": {
+        "operationId": "post-upload",
+        "summary": "Upload image file",
+        "description": "Uploads PNG or JPG image files with validation and metadata",
+        "tags": [
+          "Uploads"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "description": "Image file (PNG/JPG, max 5MB)",
+                    "nullable": false
+                  },
+                  "description": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "category": {
+                    "type": "string",
+                    "nullable": false
+                  }
+                }
+              }
+            }
+          },
+          "description": "Multipart form data containing image file (PNG/JPG, max 5MB), optional description and category"
+        },
+        "responses": {
+          "200": {
+            "description": "Returns upload confirmation with file metadata and access URL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "filename": {
+                      "type": "string"
+                    },
+                    "size": {
+                      "type": "number"
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "MIME type"
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "File access URL"
+                    },
+                    "category": {
+                      "type": "string",
+                      "description": "File category"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "uploadedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
               }
             }
           }
