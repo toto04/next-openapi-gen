@@ -75,6 +75,9 @@ During initialization (`npx next-openapi-gen init`), a configuration file `next.
 | `outputFile`           | Path to the OpenAPI output file                  |
 | `docsUrl`              | API documentation URL (for Swagger UI)           |
 | `includeOpenApiRoutes` | Whether to include only routes with @openapi tag |
+| `defaultResponseSet`   | Default error response set for all endpoints     |
+| `responseSets`         | Named sets of error response codes               |
+| `errorConfig`          | Error schema configuration                       |
 
 ## Documenting Your API
 
@@ -154,6 +157,8 @@ export async function GET(
 | `@bodyDescription`     | Request body description                                                            |
 | `@response`            | Response type/schema                                                                |
 | `@responseDescription` | Response description                                                                |
+| `@responseSet`         | Override default response set (`public`, `auth`, `none`)                            |
+| `@add`                 | Add custom response codes (`409:ConflictResponse`, `429`)                           |
 | `@contentType`         | Request body content type (`application/json`, `multipart/form-data`)               |
 | `@auth`                | Authorization type (`bearer`, `basic`, `apikey`)                                    |
 | `@tag`                 | Custom tag                                                                          |
@@ -370,6 +375,89 @@ const FileUploadSchema = z.object({
  */
 export async function POST() {
   // ...
+}
+```
+
+## Response Management
+
+### Zero Config + Response Sets
+
+Configure reusable error sets in `next.openapi.json`:
+
+```json
+{
+  "defaultResponseSet": "common",
+  "responseSets": {
+    "common": ["400", "401", "500"],
+    "public": ["400", "500"],
+    "auth": ["400", "401", "403", "500"]
+  }
+}
+```
+
+### Usage Examples
+
+```typescript
+/**
+ * Auto-default responses
+ * @response UserResponse
+ * @openapi
+ */
+export async function GET() {}
+// Generates: 200:UserResponse + common errors (400, 401, 500)
+
+/**
+ * Override response set
+ * @response ProductResponse
+ * @responseSet public
+ * @openapi
+ */
+export async function GET() {}
+// Generates: 200:ProductResponse + public errors (400, 500)
+
+/**
+ * Add custom responses
+ * @response 201:UserResponse
+ * @add 409:ConflictResponse
+ * @openapi
+ */
+export async function POST() {}
+// Generates: 201:UserResponse + common errors + 409:ConflictResponse
+
+/**
+ * Combine multiple sets
+ * @response UserResponse
+ * @responseSet auth,crud
+ * @add 429:RateLimitResponse
+ * @openapi
+ */
+export async function PUT() {}
+// Combines: auth + crud errors + custom 429
+```
+
+### Error Schema Configuration
+
+#### Define consistent error schemas using templates:
+
+```json
+{
+  "errorConfig": {
+    "template": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "{{ERROR_MESSAGE}}"
+        }
+      }
+    },
+    "codes": {
+      "invalid_request": {
+        "description": "Invalid request",
+        "variables": { "ERROR_MESSAGE": "Validation failed" }
+      }
+    }
+  }
 }
 ```
 
