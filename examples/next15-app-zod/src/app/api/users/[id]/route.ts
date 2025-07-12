@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
  * @pathParams UserIdParams
  * @params UserFieldsQuery
  * @response UserDetailedSchema
+ * @responseDescription Return user details
  * @openapi
  */
 export async function GET(
@@ -22,6 +23,7 @@ export async function GET(
  * @pathParams UserIdParams
  * @body UpdateUserBody
  * @response UserDetailedSchema
+ * @responseDescription Update user info
  * @auth bearer
  * @openapi
  */

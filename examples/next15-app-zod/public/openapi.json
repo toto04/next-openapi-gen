@@ -1536,9 +1536,70 @@
           "country"
         ]
       }
+    },
+    "responses": {
+      "400": {
+        "description": "Bad request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Validation error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "Unauthorized",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Unathorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Something went wrong"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
-  "schemaType": "zod",
   "paths": {
     "/orders": {
       "get": {
@@ -1679,6 +1740,12 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       },
@@ -1753,7 +1820,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "Successful response",
             "content": {
               "application/json": {
@@ -1888,6 +1955,12 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
@@ -2054,6 +2127,12 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       },
@@ -2245,6 +2324,12 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       },
@@ -2274,13 +2359,11 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
@@ -2434,6 +2517,12 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       },
@@ -2622,6 +2711,12 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       },
@@ -2651,13 +2746,11 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
@@ -2702,7 +2795,7 @@
           "description": "Multipart form data containing image file (PNG/JPG, max 5MB), optional description and category"
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "Returns upload confirmation with file metadata and access URL",
             "content": {
               "application/json": {
@@ -2756,6 +2849,12 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
@@ -2788,7 +2887,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "Response users list",
             "content": {
               "application/json": {
                 "schema": {
@@ -2829,6 +2928,15 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
@@ -2866,7 +2974,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "Return user details",
             "content": {
               "application/json": {
                 "schema": {
@@ -2907,6 +3015,12 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       },
@@ -2999,7 +3113,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "Update user info",
             "content": {
               "application/json": {
                 "schema": {
@@ -3040,6 +3154,12 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       },
@@ -3069,13 +3189,11 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
