@@ -69,5 +69,6 @@
   "schemaType": "zod",
   "ui": "scalar",
   "outputFile": "openapi.json",
-  "includeOpenApiRoutes": true
+  "includeOpenApiRoutes": true,
+  "debug": false
 }
