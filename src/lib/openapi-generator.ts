@@ -56,7 +56,7 @@ export class OpenApiGenerator {
     let appRouterApiDir = "";
     if (fs.existsSync(path.join(path.dirname(apiDir), "app", "api"))) {
       appRouterApiDir = path.join(path.dirname(apiDir), "app", "api");
-      logger.log(
+      logger.debug(
         `Found app router API directory at ${appRouterApiDir}`
       );
     }

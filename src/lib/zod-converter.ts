@@ -30,12 +30,12 @@ export class ZodSchemaConverter {
       this.preScanForTypeMappings();
     }
 
-    logger.log(`Looking for Zod schema: ${schemaName}`);
+    logger.debug(`Looking for Zod schema: ${schemaName}`);
 
     // Check mapped types
     const mappedSchemaName = this.typeToSchemaMapping[schemaName];
     if (mappedSchemaName) {
-      logger.log(
+      logger.debug(
         `Type '${schemaName}' is mapped to schema '${mappedSchemaName}'`
       );
       schemaName = mappedSchemaName;
@@ -62,7 +62,7 @@ export class ZodSchemaConverter {
         this.processFileForZodSchema(routeFile, schemaName);
 
         if (this.zodSchemas[schemaName]) {
-          logger.log(
+          logger.debug(
             `Found Zod schema '${schemaName}' in route file: ${routeFile}`
           );
           return this.zodSchemas[schemaName];
@@ -74,11 +74,11 @@ export class ZodSchemaConverter {
 
       // Return the schema if found, or null if not
       if (this.zodSchemas[schemaName]) {
-        logger.log(`Found and processed Zod schema: ${schemaName}`);
+        logger.debug(`Found and processed Zod schema: ${schemaName}`);
         return this.zodSchemas[schemaName];
       }
 
-      logger.log(`Could not find Zod schema: ${schemaName}`);
+      logger.debug(`Could not find Zod schema: ${schemaName}`);
       return null;
     } finally {
       // Remove from processing set
@@ -131,7 +131,7 @@ export class ZodSchemaConverter {
         }
       }
     } catch (error) {
-      logger.log(`Error scanning directory ${dir} for route files: ${error}`);
+      logger.error(`Error scanning directory ${dir} for route files: ${error}`);
     }
   }
 
@@ -153,7 +153,7 @@ export class ZodSchemaConverter {
         }
       }
     } catch (error) {
-      logger.log(`Error scanning directory ${dir}: ${error}`);
+      logger.error(`Error scanning directory ${dir}: ${error}`);
     }
   }
 
@@ -344,7 +344,7 @@ export class ZodSchemaConverter {
                           : null;
 
                         if (key && schema.properties) {
-                          logger.log(`Removing property: ${key}`);
+                          logger.debug(`Removing property: ${key}`);
                           delete schema.properties[key];
                           if (schema.required) {
                             schema.required = schema.required.filter(
@@ -445,20 +445,20 @@ export class ZodSchemaConverter {
               const baseSchemaName = findBaseSchema(path.node.init);
 
               if (baseSchemaName && baseSchemaName !== "z") {
-                logger.log(
+                logger.debug(
                   `Found chained call starting from: ${baseSchemaName}`
                 );
 
                 // First make sure the underlying schema is processed
                 if (!this.zodSchemas[baseSchemaName]) {
-                  logger.log(
+                  logger.debug(
                     `Base schema ${baseSchemaName} not found, processing it first`
                   );
                   this.processFileForZodSchema(filePath, baseSchemaName);
                 }
 
                 if (this.zodSchemas[baseSchemaName]) {
-                  logger.log("Base schema found, applying transformations");
+                  logger.debug("Base schema found, applying transformations");
 
                   // Copy base schema
                   const baseSchema = JSON.parse(
@@ -472,7 +472,7 @@ export class ZodSchemaConverter {
                   );
 
                   this.zodSchemas[schemaName] = finalSchema;
-                  logger.log(
+                  logger.debug(
                     `Created ${schemaName} with properties: ${Object.keys(
                       finalSchema.properties || {}
                     )}`
@@ -529,7 +529,7 @@ export class ZodSchemaConverter {
 
                   // Save mapping: TypeName -> SchemaName
                   this.typeToSchemaMapping[typeName] = referencedSchemaName;
-                  logger.log(
+                  logger.debug(
                     `Mapped type '${typeName}' to schema '${referencedSchemaName}'`
                   );
 
@@ -575,9 +575,7 @@ export class ZodSchemaConverter {
         },
       });
     } catch (error) {
-      console.error(
-        `Error processing file ${filePath} for schema ${schemaName}: ${error}`
-      );
+      logger.error(`Error processing file ${filePath} for schema ${schemaName}: ${error}`);
     }
   }
 
@@ -622,7 +620,7 @@ export class ZodSchemaConverter {
         },
       });
     } catch (error) {
-      console.error(
+      logger.error(
         `Error processing all schemas in file ${filePath}: ${error}`
       );
     }
@@ -703,7 +701,7 @@ export class ZodSchemaConverter {
       return this.processZodLazy(node);
     }
 
-    console.warn("Unknown Zod schema node:", node);
+    logger.debug("Unknown Zod schema node:", node);
     return { type: "object" };
   }
 
@@ -932,7 +930,7 @@ export class ZodSchemaConverter {
         } else if (t.isStringLiteral(prop.key)) {
           propName = prop.key.value;
         } else {
-          console.log(`Skipping property ${index} - unsupported key type`);
+          logger.debug(`Skipping property ${index} - unsupported key type`);
           return; // Skip if key is not identifier or string literal
         }
 
@@ -1469,7 +1467,7 @@ export class ZodSchemaConverter {
             if (baseSchema.description)
               schema.description = baseSchema.description;
           } else {
-            logger.warn("Could not resolve base schema for extend");
+            logger.debug("Could not resolve base schema for extend");
             schema = extendedProps || { type: "object" };
           }
         }
@@ -1579,7 +1577,7 @@ export class ZodSchemaConverter {
    * Pre-scan all files to build type mappings
    */
   preScanForTypeMappings() {
-    logger.log("Pre-scanning for type mappings...");
+    logger.debug("Pre-scanning for type mappings...");
 
     // Scan route files
     const routeFiles = this.findRouteFiles();
@@ -1638,7 +1636,7 @@ export class ZodSchemaConverter {
                 if (t.isTSTypeQuery(param) && t.isIdentifier(param.exprName)) {
                   const referencedSchemaName = param.exprName.name;
                   this.typeToSchemaMapping[typeName] = referencedSchemaName;
-                  logger.log(
+                  logger.debug(
                     `Pre-scan: Mapped type '${typeName}' to schema '${referencedSchemaName}'`
                   );
                 }
@@ -1648,7 +1646,7 @@ export class ZodSchemaConverter {
         },
       });
     } catch (error) {
-      logger.log(`Error scanning file ${filePath} for type mappings: ${error}`);
+      logger.error(`Error scanning file ${filePath} for type mappings: ${error}`);
     }
   }
 
@@ -1699,7 +1697,7 @@ export class ZodSchemaConverter {
                   this.isZodSchema(declaration.init) &&
                   !this.zodSchemas[schemaName]
                 ) {
-                  logger.log(`Pre-processing Zod schema: ${schemaName}`);
+                  logger.debug(`Pre-processing Zod schema: ${schemaName}`);
                   this.processingSchemas.add(schemaName);
                   const schema = this.processZodNode(declaration.init);
                   if (schema) {
@@ -1721,7 +1719,7 @@ export class ZodSchemaConverter {
                 !this.zodSchemas[schemaName] &&
                 !this.processingSchemas.has(schemaName)
               ) {
-                logger.log(`Pre-processing Zod schema: ${schemaName}`);
+                logger.debug(`Pre-processing Zod schema: ${schemaName}`);
                 this.processingSchemas.add(schemaName);
                 const schema = this.processZodNode(declaration.init);
                 if (schema) {

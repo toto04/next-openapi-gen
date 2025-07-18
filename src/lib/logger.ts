@@ -25,23 +25,24 @@ class Logger {
   }
 
   log(message: string, ...args: any[]) {
-    if (this.config?.debug) {
-      const source = this.getCallerInfo();
-      console.log(`[${source}] ${message}`, ...args);
-    }
+    const source = this.getCallerInfo();
+    console.log(`[${source}] ${message}`, ...args);
   }
 
   warn(message: string, ...args: any[]) {
-    if (this.config?.debug) {
-      const source = this.getCallerInfo();
-      console.warn(`[${source}] ${message}`, ...args);
-    }
+    const source = this.getCallerInfo();
+    console.warn(`[${source}] ${message}`, ...args);
   }
 
   error(message: string, ...args: any[]) {
+    const source = this.getCallerInfo();
+    console.error(`[${source}] ${message}`, ...args);
+  }
+
+  debug(message: string, ...args: any[]) {
     if (this.config?.debug) {
       const source = this.getCallerInfo();
-      console.error(`[${source}] ${message}`, ...args);
+      console.log(`[${source}] ${message}`, ...args);
     }
   }
 }

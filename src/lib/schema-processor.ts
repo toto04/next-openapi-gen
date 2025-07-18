@@ -63,13 +63,13 @@ export class SchemaProcessor {
 
     // Check if we should use Zod schemas
     if (this.schemaType === "zod") {
-      logger.log(`Looking for Zod schema: ${schemaName}`);
+      logger.debug(`Looking for Zod schema: ${schemaName}`);
 
       // Check type mapping first
       const mappedSchemaName =
         this.zodSchemaConverter.typeToSchemaMapping[schemaName];
       if (mappedSchemaName) {
-        logger.log(
+        logger.debug(
           `Type '${schemaName}' is mapped to Zod schema '${mappedSchemaName}'`
         );
       }
@@ -78,12 +78,12 @@ export class SchemaProcessor {
       const zodSchema =
         this.zodSchemaConverter.convertZodSchemaToOpenApi(schemaName);
       if (zodSchema) {
-        logger.log(`Found and processed Zod schema: ${schemaName}`);
+        logger.debug(`Found and processed Zod schema: ${schemaName}`);
         this.openapiDefinitions[schemaName] = zodSchema;
         return zodSchema;
       }
 
-      logger.log(
+      logger.debug(
         `No Zod schema found for ${schemaName}, trying TypeScript fallback`
       );
     }
@@ -498,7 +498,7 @@ export class SchemaProcessor {
       return { $ref: `#/components/schemas/${node.typeName.name}` };
     }
 
-    logger.log("Unrecognized TypeScript type node:", node);
+    logger.debug("Unrecognized TypeScript type node:", node);
     return { type: "object" }; // By default we return an object
   }
 

@@ -176,7 +176,7 @@ export class RouteProcessor {
 
               // If we have path parameters but no pathParamsType defined, we should log a warning
               if (pathParams.length > 0 && !dataTypes.pathParamsType) {
-                logger.warn(
+                logger.debug(
                   `Route ${routePath} contains path parameters ${pathParams.join(
                     ", "
                   )} but no @pathParams type is defined.`
@@ -202,7 +202,7 @@ export class RouteProcessor {
                   const pathParams = extractPathParameters(routePath);
 
                   if (pathParams.length > 0 && !dataTypes.pathParamsType) {
-                    logger.warn(
+                    logger.debug(
                       `Route ${routePath} contains path parameters ${pathParams.join(
                         ", "
                       )} but no @pathParams type is defined.`
@@ -222,7 +222,7 @@ export class RouteProcessor {
   }
 
   public scanApiRoutes(dir: string): void {
-    logger.log(`Scanning API routes in: ${dir}`);
+    logger.debug(`Scanning API routes in: ${dir}`);
 
     let files = this.directoryCache[dir];
     if (!files) {
