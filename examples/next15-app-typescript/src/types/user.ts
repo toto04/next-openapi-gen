@@ -15,11 +15,18 @@ export type UserAddress = {
   postalCode: string;
 };
 
-// Define response type
-export type UserResponse = {
-  id: string; // User's unique identifier
-  name: string; // User's full name
-  email: string; // User's email address
-  role: string; // User's role in the system
+export interface User {
+  id: string;           
+  email: string;
+  name: string;
+  password: string;
+  role: 'admin' | 'user';
   address: UserAddress;
-};
+  createdAt: Date;
+  updatedAt: Date;
+  internalNotes?: string;
+}
+
+export type UserRegisterRequest = Pick<User, "email" | "name" | "password">;
+
+export type UserResponse = Omit<User, "password" | "internalNotes">;
