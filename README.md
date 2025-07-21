@@ -178,8 +178,9 @@ npx next-openapi-gen init
 This command will generate following elements:
 
 - Generate `next.openapi.json` configuration file
-- Install UI interface (default `Scalar`)
+- Set up `Scalar` UI for documentation display
 - Add `/api-docs` page to display OpenAPI documentation
+- Configure `zod` as the default schema tool
 
 ### 2. Generate Documentation
 
@@ -192,7 +193,7 @@ This command will generate OpenAPI documentation based on your API code:
 - Scan API directories for routes
 - Analyze types/schemas
 - Generate OpenAPI file (`openapi.json`) in `public` folder
-- Create Swagger/Scalar UI endpoint and page (if enabled)
+- Create Scalar/Swagger UI endpoint and page (if enabled)
 
 ### 3. View API Documentation
 
