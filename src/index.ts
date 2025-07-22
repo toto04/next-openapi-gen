@@ -22,7 +22,11 @@ program
       .default("swagger")
   )
   .option("-u, --docs-url <url>", "Specify the docs URL", "api-docs")
-  .option("-s, --schema <schemaType>", "Specify the schema type", "zod")
+  .addOption(
+    new Option("-s, --schema <schemaType>", "Specify the schema tool")
+      .choices(["zod", "typescript"])
+      .default("zod")
+  )
   .description("Initialize a openapi specification")
   .action(init);
 

@@ -108,11 +108,11 @@ async function installDependencies(ui: string) {
 function extendOpenApiTemplate(spec, options) {
   spec.ui = options.ui ?? spec.ui;
   spec.docsUrl = options.docsUrl ?? spec.docsUrl;
-  spec.schemaType = options.schemaType ?? spec.schemaType;
+  spec.schemaType = options.schema ?? spec.schemaType;
 }
 
-export async function init(options: { ui: string; docsUrl: string, schemaType: string }) {
-  const { ui, docsUrl, schemaType } = options;
+export async function init(options) {
+  const { ui } = options;
 
   spinner.start();
 
@@ -120,7 +120,7 @@ export async function init(options: { ui: string; docsUrl: string, schemaType: s
     const outputPath = path.join(process.cwd(), "next.openapi.json");
     const template = { ...openapiTemplate };
 
-    extendOpenApiTemplate(template, { docsUrl, ui, schemaType });
+    extendOpenApiTemplate(template, options);
 
     await fse.writeJson(outputPath, template, { spaces: 2 });
     spinner.succeed(`Created OpenAPI template in next.openapi.json`);
