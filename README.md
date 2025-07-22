@@ -150,22 +150,22 @@ export async function GET(
 
 ## JSDoc Documentation Tags
 
-| Tag                    | Description                                                                         |
-| ---------------------- | ----------------------------------------------------------------------------------- |
-| `@description`         | Endpoint description                                                                |
-| `@pathParams`          | Path parameters type/schema                                                         |
-| `@params`              | Query parameters type/schema                                                        |
-| `@body`                | Request body type/schema                                                            |
-| `@bodyDescription`     | Request body description                                                            |
-| `@response`            | Response type/schema                                                                |
-| `@responseDescription` | Response description                                                                |
-| `@responseSet`         | Override default response set (`public`, `auth`, `none`)                            |
-| `@add`                 | Add custom response codes (`409:ConflictResponse`, `429`)                           |
-| `@contentType`         | Request body content type (`application/json`, `multipart/form-data`)               |
-| `@auth`                | Authorization type (`bearer`, `basic`, `apikey`)                                    |
-| `@tag`                 | Custom tag                                                                          |
-| `@deprecated`          | Marks the route as deprecated                                                       |
-| `@openapi`             | Marks the route for inclusion in documentation (if includeOpenApiRoutes is enabled) |
+| Tag                    | Description                                                                                                              |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `@description`         | Endpoint description                                                                                                     |
+| `@pathParams`          | Path parameters type/schema                                                                                              |
+| `@params`              | Query parameters type/schema                                                                                             |
+| `@body`                | Request body type/schema                                                                                                 |
+| `@bodyDescription`     | Request body description                                                                                                 |
+| `@response`            | Response type/schema with optional code and description (`User`, `201:User`, `User:Description`, `201:User:Description`) |
+| `@responseDescription` | Response description                                                                                                     |
+| `@responseSet`         | Override default response set (`public`, `auth`, `none`)                                                                 |
+| `@add`                 | Add custom response codes (`409:ConflictResponse`, `429`)                                                                |
+| `@contentType`         | Request body content type (`application/json`, `multipart/form-data`)                                                    |
+| `@auth`                | Authorization type (`bearer`, `basic`, `apikey`)                                                                         |
+| `@tag`                 | Custom tag                                                                                                               |
+| `@deprecated`          | Marks the route as deprecated                                                                                            |
+| `@openapi`             | Marks the route for inclusion in documentation (if includeOpenApiRoutes is enabled)                                      |
 
 ## CLI Usage
 
@@ -307,6 +307,28 @@ type UserResponse = {
 export async function GET() {
   // ...
 }
+
+// Alternative formats with inline description
+/**
+ * @response UserResponse:Returns user profile data
+ */
+export async function GET() {
+  // ...
+}
+
+/**
+ * @response 201:UserResponse:Returns newly created user
+ */
+export async function POST() {
+  // ...
+}
+
+/**
+ * @response 204:Empty:User successfully deleted
+ */
+export async function DELETE() {
+  // ...
+}
 ```
 
 ### Authorization
@@ -410,6 +432,14 @@ export async function GET() {}
 // Generates: 200:UserResponse + common errors (400, 401, 500)
 
 /**
+ * With custom description inline
+ * @response UserResponse:Complete user profile information
+ * @openapi
+ */
+export async function GET() {}
+// Generates: 200:UserResponse (with custom description) + common errors
+
+/**
  * Override response set
  * @response ProductResponse
  * @responseSet public
@@ -419,13 +449,13 @@ export async function GET() {}
 // Generates: 200:ProductResponse + public errors (400, 500)
 
 /**
- * Add custom responses
- * @response 201:UserResponse
+ * Add custom responses with description
+ * @response 201:UserResponse:User created successfully
  * @add 409:ConflictResponse
  * @openapi
  */
 export async function POST() {}
-// Generates: 201:UserResponse + common errors + 409:ConflictResponse
+// Generates: 201:UserResponse (with custom description) + common errors + 409:ConflictResponse
 
 /**
  * Combine multiple sets

@@ -143,12 +143,16 @@ export function extractJSDocComments(path: NodePath): DataTypes {
 
       if (commentValue.includes("@response")) {
         const responseMatch = commentValue.match(
-          /@response\s+(?:(\d+):)?(\w+)(?:\s+(.*))?/
+          /@response\s+(?:(\d+):)?(\w+)(?::(.*))?/
         );
         if (responseMatch) {
-          const [, code, type] = responseMatch;
+          const [, code, type, description] = responseMatch;
           successCode = code || "";
           responseType = type;
+          // Set responseDescription only if not already set by @responseDescription
+          if (description?.trim() && !responseDescription) {
+            responseDescription = description.trim();
+          }
         } else {
           responseType = extractTypeFromComment(commentValue, "@response");
         }
