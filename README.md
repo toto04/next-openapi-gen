@@ -444,6 +444,12 @@ export async function PUT() {}
 
 ```json
 {
+  "defaultResponseSet": "common",
+  "responseSets": {
+    "common": ["400", "500"],
+    "auth": ["400", "401", "403", "500"],
+    "public": ["400", "500"]
+  },
   "errorConfig": {
     "template": {
       "type": "object",
@@ -451,13 +457,48 @@ export async function PUT() {}
         "error": {
           "type": "string",
           "example": "{{ERROR_MESSAGE}}"
+        },
+        "code": {
+          "type": "string",
+          "example": "{{ERROR_CODE}}"
         }
       }
     },
     "codes": {
-      "invalid_request": {
-        "description": "Invalid request",
-        "variables": { "ERROR_MESSAGE": "Validation failed" }
+      "400": {
+        "description": "Bad Request",
+        "variables": {
+          "ERROR_MESSAGE": "Invalid request parameters",
+          "ERROR_CODE": "BAD_REQUEST"
+        }
+      },
+      "401": {
+        "description": "Unauthorized",
+        "variables": {
+          "ERROR_MESSAGE": "Authentication required",
+          "ERROR_CODE": "UNAUTHORIZED"
+        }
+      },
+      "403": {
+        "description": "Forbidden",
+        "variables": {
+          "ERROR_MESSAGE": "Access denied",
+          "ERROR_CODE": "FORBIDDEN"
+        }
+      },
+      "404": {
+        "description": "Not Found",
+        "variables": {
+          "ERROR_MESSAGE": "Resource not found",
+          "ERROR_CODE": "NOT_FOUND"
+        }
+      },
+      "500": {
+        "description": "Internal Server Error",
+        "variables": {
+          "ERROR_MESSAGE": "An unexpected error occurred",
+          "ERROR_CODE": "INTERNAL_ERROR"
+        }
       }
     }
   }

@@ -23,42 +23,64 @@ export default {
   defaultResponseSet: "common",
   responseSets: {
     common: ["400", "500"],
-    auth: ["401"],
+    auth: ["400", "401", "403", "500"],
+    public: ["400", "500"],
   },
   errorConfig: {
     template: {
       type: "object",
       properties: {
-        success: {
-          type: "boolean",
-          example: false,
-        },
         error: {
           type: "string",
           example: "{{ERROR_MESSAGE}}",
         },
+        code: {
+          type: "string",
+          example: "{{ERROR_CODE}}",
+        },
       },
     },
     codes: {
-      invalid: {
-        description: "Bad request",
-        httpStatus: 400,
+      "400": {
+        description: "Bad Request",
         variables: {
-          ERROR_MESSAGE: "Validation error",
+          ERROR_MESSAGE: "Invalid request parameters",
+          ERROR_CODE: "BAD_REQUEST",
         },
       },
-      auth: {
+      "401": {
         description: "Unauthorized",
-        httpStatus: 401,
         variables: {
-          ERROR_MESSAGE: "Unathorized",
+          ERROR_MESSAGE: "Authentication required",
+          ERROR_CODE: "UNAUTHORIZED",
         },
       },
-      server_error: {
-        description: "Internal server error",
-        httpStatus: 500,
+      "403": {
+        description: "Forbidden",
         variables: {
-          ERROR_MESSAGE: "Something went wrong",
+          ERROR_MESSAGE: "Access denied",
+          ERROR_CODE: "FORBIDDEN",
+        },
+      },
+      "404": {
+        description: "Not Found",
+        variables: {
+          ERROR_MESSAGE: "Resource not found",
+          ERROR_CODE: "NOT_FOUND",
+        },
+      },
+      "409": {
+        description: "Conflict",
+        variables: {
+          ERROR_MESSAGE: "Resource already exists",
+          ERROR_CODE: "CONFLICT",
+        },
+      },
+      "500": {
+        description: "Internal Server Error",
+        variables: {
+          ERROR_MESSAGE: "An unexpected error occurred",
+          ERROR_CODE: "INTERNAL_ERROR",
         },
       },
     },

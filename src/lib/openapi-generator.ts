@@ -56,9 +56,7 @@ export class OpenApiGenerator {
     let appRouterApiDir = "";
     if (fs.existsSync(path.join(path.dirname(apiDir), "app", "api"))) {
       appRouterApiDir = path.join(path.dirname(apiDir), "app", "api");
-      logger.debug(
-        `Found app router API directory at ${appRouterApiDir}`
-      );
+      logger.debug(`Found app router API directory at ${appRouterApiDir}`);
     }
 
     // Scan pages router routes
@@ -174,6 +172,11 @@ export class OpenApiGenerator {
   }
 
   private guessHttpStatus(errorCode: string): number {
+    const numericCode = parseInt(errorCode);
+    if (numericCode >= 100 && numericCode < 600) {
+      return numericCode;
+    }
+
     const statusMap = {
       bad: 400,
       invalid: 400,
