@@ -575,7 +575,9 @@ export class ZodSchemaConverter {
         },
       });
     } catch (error) {
-      logger.error(`Error processing file ${filePath} for schema ${schemaName}: ${error}`);
+      logger.error(
+        `Error processing file ${filePath} for schema ${schemaName}: ${error}`
+      );
     }
   }
 
@@ -647,6 +649,28 @@ export class ZodSchemaConverter {
       }
 
       return this.processZodChain(node);
+    }
+
+    // Handle z.coerce.TYPE() patterns
+    if (
+      t.isCallExpression(node) &&
+      t.isMemberExpression(node.callee) &&
+      t.isMemberExpression(node.callee.object) &&
+      t.isIdentifier(node.callee.object.object) &&
+      node.callee.object.object.name === "z" &&
+      t.isIdentifier(node.callee.object.property) &&
+      node.callee.object.property.name === "coerce" &&
+      t.isIdentifier(node.callee.property)
+    ) {
+      const coerceType = node.callee.property.name;
+
+      // Create a synthetic node for the underlying type using Babel types
+      const syntheticNode = t.callExpression(
+        t.memberExpression(t.identifier("z"), t.identifier(coerceType)),
+        []
+      );
+
+      return this.processZodPrimitive(syntheticNode);
     }
 
     // Handle z.object({...})
@@ -1646,7 +1670,9 @@ export class ZodSchemaConverter {
         },
       });
     } catch (error) {
-      logger.error(`Error scanning file ${filePath} for type mappings: ${error}`);
+      logger.error(
+        `Error scanning file ${filePath} for type mappings: ${error}`
+      );
     }
   }
 
