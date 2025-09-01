@@ -52,7 +52,9 @@ export class ZodSchemaConverter {
     try {
       // Return cached schema if it exists
       if (this.zodSchemas[schemaName]) {
-        return this.zodSchemas[schemaName];
+        return {
+          $ref: `#/components/schemas/${schemaName}`,
+        };
       }
 
       // Find all route files and process them first
@@ -65,7 +67,9 @@ export class ZodSchemaConverter {
           logger.debug(
             `Found Zod schema '${schemaName}' in route file: ${routeFile}`
           );
-          return this.zodSchemas[schemaName];
+          return {
+            $ref: `#/components/schemas/${schemaName}`,
+          };
         }
       }
 
@@ -75,7 +79,9 @@ export class ZodSchemaConverter {
       // Return the schema if found, or null if not
       if (this.zodSchemas[schemaName]) {
         logger.debug(`Found and processed Zod schema: ${schemaName}`);
-        return this.zodSchemas[schemaName];
+        return {
+          $ref: `#/components/schemas/${schemaName}`,
+        };
       }
 
       logger.debug(`Could not find Zod schema: ${schemaName}`);
@@ -719,8 +725,30 @@ export class ZodSchemaConverter {
       return this.processZodLazy(node);
     }
 
-    logger.debug("Unknown Zod schema node:", node);
-    return { type: "object" };
+    if (
+      t.isCallExpression(node) &&
+      t.isMemberExpression(node.callee) &&
+      t.isIdentifier(node.callee.object) &&
+      node.callee.object.name !== "z" &&
+      t.isIdentifier(node.callee.property) &&
+      node.callee.property.name === "describe"
+    ) {
+      if (node.arguments.length > 0 && t.isStringLiteral(node.arguments[0])) {
+        return {
+          allOf: [this.processZodNode(node.callee.object)],
+          description: node.arguments[0].value,
+        };
+      } else {
+        return this.processZodNode(node.callee.object);
+      }
+    }
+
+    if (
+      t.isIdentifier(node) &&
+      (this.zodSchemas[node.name] || this.processingSchemas.has(node.name))
+    ) {
+      return { $ref: `#/components/schemas/${node.name}` };
+    }
   }
 
   /**
@@ -962,7 +990,7 @@ export class ZodSchemaConverter {
           const methodName = prop.value.callee.property.name;
 
           // Process base schema first
-          if (!this.zodSchemas[schemaName]) {
+          if (!this.zodSchemas[schemaName] && schemaName !== "z") {
             this.convertZodSchemaToOpenApi(schemaName);
           }
 

@@ -237,11 +237,8 @@ export class RouteProcessor {
 
       if (stat.isDirectory()) {
         this.scanApiRoutes(filePath);
-        // @ts-ignore
-      } else if (file.endsWith(".ts") || file.endsWith(".tsx")) {
-        if (file === "route.ts" || file === "route.tsx") {
-          this.processFile(filePath);
-        }
+      } else if (file === "route.ts" || file === "route.tsx") {
+        this.processFile(filePath);
       }
     });
   }
@@ -269,10 +266,6 @@ export class RouteProcessor {
     if (this.config.includeOpenApiRoutes && !isOpenApi) {
       // If flag is enabled and there is no @openapi tag, then skip path
       return;
-    }
-
-    if (!this.swaggerPaths[routePath]) {
-      this.swaggerPaths[routePath] = {};
     }
 
     const { params, pathParams, body, responses } =
@@ -350,6 +343,9 @@ export class RouteProcessor {
         : {};
     }
 
+    if (!(routePath in this.swaggerPaths)) {
+      this.swaggerPaths[routePath] = {};
+    }
     this.swaggerPaths[routePath][method] = definition;
   }
 

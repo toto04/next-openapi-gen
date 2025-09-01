@@ -73,6 +73,9 @@ export class SchemaProcessor {
         logger.debug(
           `Type '${schemaName}' is mapped to Zod schema '${mappedSchemaName}'`
         );
+        return {
+          $ref: `#/components/schemas/${mappedSchemaName}`,
+        };
       }
 
       // Try to convert Zod schema
@@ -81,7 +84,9 @@ export class SchemaProcessor {
       if (zodSchema) {
         logger.debug(`Found and processed Zod schema: ${schemaName}`);
         this.openapiDefinitions[schemaName] = zodSchema;
-        return zodSchema;
+        return {
+          $ref: `#/components/schemas/${schemaName}`,
+        };
       }
 
       logger.debug(
